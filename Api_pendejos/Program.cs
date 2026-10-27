@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AndButMar_MarketplaceContext>();
+builder.Services.AddControllers();
+builder.Services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
 
 var key = new SymmetricSecurityKey(
     RandomNumberGenerator.GetBytes(32));
@@ -53,6 +55,7 @@ var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 

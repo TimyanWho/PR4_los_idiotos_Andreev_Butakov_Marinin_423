@@ -117,24 +117,13 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 return null;
             }
 
-            // Из БД получаем, например:
-            // /images/products/xphone15.jpg
-            // Ищем файл в Assets/Products внутри WPF-проекта.
+            // Из БД получаем, например: /images/products/xphone15.jpg.
+            // Картинки включены в WPF-проект как Resource и загружаются по Pack URI.
             string fileName = Path.GetFileName(
-                databasePath.Replace('\\', '/'));
+                databasePath.Replace((char)92, '/'));
 
-            string fullPath = Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "Assets",
-                "Products",
-                fileName);
-
-            if (!File.Exists(fullPath))
-            {
-                return null;
-            }
-
-            return fullPath;
+            return "/PR4_los_idiotos_Andreev_Butakov_Marinin_423;component/Assets/Products/" +
+                   Uri.EscapeDataString(fileName);
         }
 
         private void Filters_Changed(

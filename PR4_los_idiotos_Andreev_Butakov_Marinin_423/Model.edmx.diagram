@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="b420362207ed4c24bedd80cec72b0d00" Name="Diagram1">
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.cart" Width="1.5" PointX="5.25" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.categories" Width="1.5" PointX="0.75" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.favorites" Width="1.5" PointX="5.25" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.order_items" Width="1.5" PointX="10.5" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.order_statuses" Width="1.5" PointX="6" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.orders" Width="1.5" PointX="8.25" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.pickup_points" Width="1.5" PointX="6" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.products" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.reviews" Width="1.5" PointX="5.25" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.roles" Width="1.5" PointX="0.75" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.sysdiagrams" Width="1.5" PointX="8.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="AndButMar_MarketplaceModel.users" Width="1.5" PointX="3" PointY="6.375" IsExpanded="true" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__cart__product_id__5AEE82B9" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__cart__user_id__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__products__catego__6383C8BA" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__favorites__produ__5CD6CB2B" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__favorites__user___5DCAEF64" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__order_ite__order__5EBF139D" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__order_ite__produ__5FB337D6" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__orders__status_i__619B8048" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__orders__pickup_p__60A75C0F" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__orders__user_id__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__reviews__product__6477ECF3" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__reviews__user_id__656C112C" ManuallyRouted="false" />
+        <AssociationConnector Association="AndButMar_MarketplaceModel.FK__users__role_id__66603565" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,136 @@
+﻿<Page x:Class="PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages.CatalogPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Каталог"
+      Loaded="Page_Loaded">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+
+            <TextBlock Text="Каталог товаров"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Margin="0,0,0,20"/>
+
+            <TextBlock Text="Поиск по названию"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,5"/>
+
+            <TextBox x:Name="SearchBox"
+                     Height="36"
+                     Padding="8"
+                     Margin="0,0,0,15"
+                     TextChanged="Filters_Changed"/>
+
+            <TextBlock Text="Фильтры"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,10"/>
+
+            <WrapPanel Margin="0,0,0,12">
+
+                <StackPanel Width="200" Margin="0,0,12,10">
+                    <TextBlock Text="Категория" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="CategoryFilter"
+                              Height="34"
+                              SelectionChanged="CategoryFilter_SelectionChanged"/>
+                </StackPanel>
+
+                <StackPanel Width="150" Margin="0,0,12,10">
+                    <TextBlock Text="Цена от" Margin="0,0,0,5"/>
+                    <TextBox x:Name="MinPriceBox"
+                             Height="34"
+                             Padding="6"
+                             TextChanged="Filters_Changed"/>
+                </StackPanel>
+
+                <StackPanel Width="150" Margin="0,0,12,10">
+                    <TextBlock Text="Цена до" Margin="0,0,0,5"/>
+                    <TextBox x:Name="MaxPriceBox"
+                             Height="34"
+                             Padding="6"
+                             TextChanged="Filters_Changed"/>
+                </StackPanel>
+
+            </WrapPanel>
+
+            <WrapPanel Margin="0,0,0,15">
+                <CheckBox x:Name="AvailableOnlyCheckBox"
+                          Content="Только товары в наличии"
+                          VerticalAlignment="Center"
+                          Margin="0,0,20,0"
+                          Checked="AvailableFilter_Changed"
+                          Unchecked="AvailableFilter_Changed"/>
+
+                <Button Content="Сбросить фильтры"
+                        Padding="14,7"
+                        Click="ClearFilters_Click"/>
+            </WrapPanel>
+
+            <TextBlock x:Name="StatusText"
+                       Text="Загрузка товаров..."
+                       Margin="0,0,0,15"
+                       Foreground="Gray"/>
+
+            <ItemsControl x:Name="ProductsItemsControl">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="245"
+                                Margin="0,0,16,16"
+                                Padding="12"
+                                BorderBrush="#DDDDDD"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Background="White">
+
+                            <StackPanel>
+                                <Image Source="{Binding ImagePath}"
+                                       Height="150"
+                                       Stretch="Uniform"
+                                       Margin="0,0,0,10"/>
+
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="17"
+                                           FontWeight="SemiBold"
+                                           TextWrapping="Wrap"
+                                           Margin="0,0,0,6"/>
+
+                                <TextBlock Text="{Binding Category}"
+                                           Foreground="Gray"
+                                           Margin="0,0,0,6"/>
+
+                                <TextBlock Text="{Binding Price, StringFormat={}{0:N0} ₽}"
+                                           FontSize="19"
+                                           FontWeight="Bold"
+                                           Margin="0,0,0,8"/>
+
+                                <TextBlock Text="{Binding RatingText}"
+                                           Margin="0,0,0,5"/>
+
+                                <TextBlock Text="{Binding AvailableText}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,0,0,5"/>
+
+                                <TextBlock Text="{Binding PackageText}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,0,0,10"/>
+
+                                <Button Content="Подробнее"
+                                        Padding="10,7"
+                                        HorizontalAlignment="Stretch"
+                                        Click="Details_Click"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

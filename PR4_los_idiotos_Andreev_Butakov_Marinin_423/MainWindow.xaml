@@ -3,79 +3,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="GMWOG | Маркетплейс"
         Width="1250"
-        Height="780"
-        MinWidth="1050"
+        Height="800"
+        MinWidth="1000"
         MinHeight="650"
-        WindowStartupLocation="CenterScreen"
-        Background="#F4F6FA">
+        WindowStartupLocation="CenterScreen">
 
-    <Window.Resources>
-
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="4"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="#172033"/>
-            <Setter Property="BorderBrush" Value="#DCE1EB"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-
-        <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="4"/>
-            <Setter Property="Padding" Value="9,7"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="#DCE1EB"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-
-        <Style TargetType="ComboBox">
-            <Setter Property="Margin" Value="4"/>
-            <Setter Property="Padding" Value="7,5"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-
-        <Style TargetType="DataGrid">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="#172033"/>
-            <Setter Property="BorderBrush" Value="#E0E5EF"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="RowBackground" Value="White"/>
-            <Setter Property="AlternatingRowBackground" Value="#F8F9FC"/>
-            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
-            <Setter Property="HorizontalGridLinesBrush" Value="#E9EDF4"/>
-            <Setter Property="VerticalGridLinesBrush" Value="#E9EDF4"/>
-            <Setter Property="HeadersVisibility" Value="Column"/>
-            <Setter Property="CanUserAddRows" Value="False"/>
-            <Setter Property="CanUserDeleteRows" Value="False"/>
-            <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="SelectionMode" Value="Single"/>
-            <Setter Property="SelectionUnit" Value="FullRow"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-
-    </Window.Resources>
-
-    <Grid Margin="22">
+    <Grid Background="#F4F6FA">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0"
                 Background="#172033"
-                CornerRadius="12"
-                Padding="18"
-                Margin="0,0,0,16">
-
+                Padding="18,12">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
@@ -83,267 +27,64 @@
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="GMWOG"
                                Foreground="White"
-                               FontSize="27"
+                               FontSize="25"
                                FontWeight="Bold"/>
-
-                    <TextBlock Text="МАРКЕТПЛЕЙС МЕЛОЧЁВКИ"
+                    <TextBlock Text="МАРКЕТПЛЕЙС"
                                Foreground="#B9C4D8"
-                               FontSize="10"
-                               Margin="1,3,0,0"/>
+                               FontSize="10"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1"
                             Orientation="Horizontal"
-                            VerticalAlignment="Center">
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
 
-                    <Border Background="#28354D"
-                            CornerRadius="8"
-                            Padding="12,9"
-                            Margin="0,0,12,0">
-
-                        <TextBlock Text="Режим: гость"
-                                   Foreground="White"
-                                   FontSize="13"/>
-                    </Border>
-
-                    <Button Content="Войти"
-                            Padding="18,10"
-                            Background="#6478F5"
+                    <Button Content="Каталог"
+                            Click="Catalog_Click"
+                            Background="#28354D"
                             Foreground="White"
                             BorderThickness="0"
-                            Click="Login_Click"/>
+                            Padding="14,9"
+                            Margin="4"/>
+
+                    <Button Content="Избранное"
+                            Click="Favorites_Click"
+                            Background="#28354D"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="14,9"
+                            Margin="4"/>
+
+                    <Button Content="Корзина"
+                            Click="Cart_Click"
+                            Background="#28354D"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="14,9"
+                            Margin="4"/>
+
+                    <Button Content="Мои заказы"
+                            Click="Orders_Click"
+                            Background="#28354D"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="14,9"
+                            Margin="4"/>
                 </StackPanel>
+
+                <Button Grid.Column="2"
+                        Content="Войти"
+                        Click="Login_Click"
+                        Background="#6478F5"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Padding="18,10"
+                        Margin="8,0,0,0"/>
             </Grid>
         </Border>
 
-        <Border Grid.Row="1"
-                Background="White"
-                BorderBrush="#E0E5EF"
-                BorderThickness="1"
-                CornerRadius="10"
-                Padding="12"
-                Margin="0,0,0,16">
-
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Text="Каталог товаров"
-                           FontSize="18"
-                           FontWeight="SemiBold"
-                           Foreground="#172033"
-                           Margin="4,0,0,8"/>
-
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2.1*"/>
-                        <ColumnDefinition Width="1.3*"/>
-                        <ColumnDefinition Width="0.8*"/>
-                        <ColumnDefinition Width="0.8*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox x:Name="SearchBox"
-                             Grid.Column="0"
-                             Height="38"
-                             ToolTip="Введите название товара"
-                             TextChanged="TextFilters_Changed"/>
-
-                    <ComboBox x:Name="CategoryFilter"
-                              Grid.Column="1"
-                              Height="38"
-                              ToolTip="Фильтр по категории"
-                              SelectionChanged="CategoryFilter_SelectionChanged"/>
-
-                    <TextBox x:Name="MinPriceBox"
-                             Grid.Column="2"
-                             Height="38"
-                             ToolTip="Минимальная цена"
-                             TextChanged="TextFilters_Changed"/>
-
-                    <TextBox x:Name="MaxPriceBox"
-                             Grid.Column="3"
-                             Height="38"
-                             ToolTip="Максимальная цена"
-                             TextChanged="TextFilters_Changed"/>
-
-                    <CheckBox x:Name="AvailableOnlyCheckBox"
-                              Grid.Column="4"
-                              Content="В наличии"
-                              VerticalAlignment="Center"
-                              Margin="8,0"
-                              Checked="AvailableFilter_Changed"
-                              Unchecked="AvailableFilter_Changed"/>
-
-                    <Button Grid.Column="5"
-                            Content="Сбросить"
-                            Height="38"
-                            Click="ClearFilters_Click"/>
-                </Grid>
-            </Grid>
-        </Border>
-
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2.2*"/>
-                <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-
-            <Border Grid.Column="0"
-                    Background="White"
-                    BorderBrush="#E0E5EF"
-                    BorderThickness="1"
-                    CornerRadius="10"
-                    Padding="8">
-
-                <DataGrid x:Name="ProductsGrid"
-                          SelectionChanged="ProductsGrid_SelectionChanged">
-
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Товар"
-                                            Binding="{Binding Name}"
-                                            Width="2.1*"/>
-
-                        <DataGridTextColumn Header="Категория"
-                                            Binding="{Binding Category}"
-                                            Width="1.15*"/>
-
-                        <DataGridTextColumn Header="Цена"
-                                            Binding="{Binding Price, StringFormat={}{0:N2} ₽}"
-                                            Width="0.9*"/>
-
-                        <DataGridTextColumn Header="Рейтинг"
-                                            Binding="{Binding Rating, StringFormat={}{0:F1}}"
-                                            Width="0.7*"/>
-
-                        <DataGridTextColumn Header="Упаковка"
-                                            Binding="{Binding ItemsPerPackage}"
-                                            Width="0.7*"/>
-
-                        <DataGridTextColumn Header="Остаток"
-                                            Binding="{Binding StockQuantity}"
-                                            Width="0.7*"/>
-
-                        <DataGridTextColumn Header="Наличие"
-                                            Binding="{Binding AvailableText}"
-                                            Width="1.1*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Border>
-
-            <Border Grid.Column="2"
-                    Background="White"
-                    BorderBrush="#E0E5EF"
-                    BorderThickness="1"
-                    CornerRadius="10"
-                    Padding="18">
-
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <TextBlock Text="Информация о товаре"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"
-                                   Foreground="#172033"
-                                   Margin="0,0,0,16"/>
-
-                        <Border Height="170"
-                                Background="#F4F6FA"
-                                BorderBrush="#E0E5EF"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="12">
-
-                            <TextBlock x:Name="SelectedProductImage"
-                                       Text="Выберите товар в каталоге"
-                                       Foreground="#667085"
-                                       TextAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       TextWrapping="Wrap"/>
-                        </Border>
-
-                        <TextBlock x:Name="SelectedProductName"
-                                   Text="Товар не выбран"
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Foreground="#172033"
-                                   TextWrapping="Wrap"
-                                   Margin="0,16,0,8"/>
-
-                        <TextBlock x:Name="SelectedProductCategory"
-                                   Text="Категория: не выбрана"
-                                   Foreground="#667085"
-                                   FontSize="12"
-                                   Margin="0,0,0,12"/>
-
-                        <TextBlock Text="Цена"
-                                   Foreground="#667085"
-                                   FontSize="12"/>
-
-                        <TextBlock x:Name="SelectedProductPrice"
-                                   Text="0,00 ₽"
-                                   Foreground="#5269E8"
-                                   FontSize="25"
-                                   FontWeight="Bold"
-                                   Margin="0,2,0,14"/>
-
-                        <TextBlock Text="Описание"
-                                   FontWeight="SemiBold"
-                                   Foreground="#172033"
-                                   Margin="0,0,0,5"/>
-
-                        <TextBlock x:Name="SelectedProductDescription"
-                                   Text="Выберите товар, чтобы посмотреть его описание."
-                                   TextWrapping="Wrap"
-                                   Foreground="#667085"
-                                   Margin="0,0,0,16"/>
-
-                        <TextBlock x:Name="SelectedProductRating"
-                                   Text="Средняя оценка: нет данных"
-                                   Foreground="#172033"
-                                   Margin="0,0,0,7"/>
-
-                        <TextBlock x:Name="SelectedProductStock"
-                                   Text="Остаток: не указан"
-                                   Foreground="#172033"
-                                   Margin="0,0,0,7"/>
-
-                        <TextBlock x:Name="SelectedProductAvailability"
-                                   Text="Статус: не указан"
-                                   FontWeight="SemiBold"
-                                   Foreground="#667085"
-                                   Margin="0,0,0,7"/>
-
-                        <TextBlock x:Name="SelectedProductPackage"
-                                   Text="Количество в упаковке: не указано"
-                                   Foreground="#667085"
-                                   TextWrapping="Wrap"
-                                   Margin="0,0,0,7"/>
-
-                    </StackPanel>
-                </ScrollViewer>
-            </Border>
-        </Grid>
-
-        <Grid Grid.Row="3" Margin="4,12,4,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock x:Name="ResultCountText"
-                       Text="Найдено товаров: 0"
-                       Foreground="#667085"
-                       VerticalAlignment="Center"/>
-
-            <TextBlock Grid.Column="1"
-                       Text="GMWOG | GG.MOW | WONGG"
-                       Foreground="#98A2B3"
-                       VerticalAlignment="Center"/>
-        </Grid>
+        <Frame x:Name="MainFrame"
+               Grid.Row="1"
+               NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

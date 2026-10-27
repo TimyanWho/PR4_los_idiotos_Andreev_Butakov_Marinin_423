@@ -163,6 +163,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\Products\airsound.jpg" />
+    <Resource Include="Assets\Products\sql_book.jpg" />
+    <Resource Include="Assets\Products\tea_set.jpg" />
+    <Resource Include="Assets\Products\tshirt_black.jpg" />
+    <Resource Include="Assets\Products\xphone15.jpg" />
+    <Resource Include="Assets\Products\yoga_mat.jpg" />
     <Content Include="Model.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model.Context.cs</LastGenOutput>
@@ -176,6 +182,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

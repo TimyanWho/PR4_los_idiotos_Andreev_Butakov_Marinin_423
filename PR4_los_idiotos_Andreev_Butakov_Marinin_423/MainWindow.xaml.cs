@@ -25,26 +25,19 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423
         }
         private void Favorites_Click(object sender, RoutedEventArgs e)
         {
-            ShowNotReady("Избранное");
+            MainFrame.Navigate(new FavoritesPage());
         }
 
         private void Cart_Click(object sender, RoutedEventArgs e)
         {
-            ShowNotReady("Корзина");
+            MainFrame.Navigate(new CartPage());
         }
 
         private void Orders_Click(object sender, RoutedEventArgs e)
         {
-            ShowNotReady("История заказов");
+            MainFrame.Navigate(new OrdersPage());
         }
 
-        private void ShowNotReady(string feature)
-        {
-            MessageBox.Show(
-                feature + " будет реализовано на следующих этапах.",
-                "GMWOG",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
+
     }
 }

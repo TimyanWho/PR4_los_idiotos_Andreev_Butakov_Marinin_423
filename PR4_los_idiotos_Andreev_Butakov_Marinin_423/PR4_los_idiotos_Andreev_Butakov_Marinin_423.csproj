@@ -79,6 +79,7 @@
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductCardModel.cs" />
+    <Compile Include="Models\ProductReviewModel.cs" />
     <Compile Include="orders.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
@@ -94,6 +95,8 @@
     <Compile Include="Pages\ProductDetailsPage.xaml.cs">
       <DependentUpon>ProductDetailsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\ICatalogApiClient.cs" />
+    <Compile Include="Services\IProductDetailsApiClient.cs" />
     <Compile Include="pickup_points.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>

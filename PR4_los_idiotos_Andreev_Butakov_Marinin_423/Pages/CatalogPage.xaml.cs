@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using PR4_los_idiotos_Andreev_Butakov_Marinin_423;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
 
 namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 {
@@ -15,112 +16,160 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         private List<ProductCardModel> _allProducts =
             new List<ProductCardModel>();
 
+        private readonly ICatalogApiClient _catalogApiClient;
         private bool _isReady;
-        private bool _loaded;
+        private bool _isLoading;
+        private bool _loadCompleted;
 
         public CatalogPage()
+            : this(null)
         {
-            InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        public CatalogPage(ICatalogApiClient catalogApiClient)
         {
-            if (_loaded)
+            InitializeComponent();
+
+            _catalogApiClient = catalogApiClient;
+            RetryButton.Visibility = _catalogApiClient == null
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_loadCompleted || _isLoading)
             {
                 return;
             }
 
-            _loaded = true;
+            if (_catalogApiClient == null)
+            {
+                StatusText.Text =
+                    "Клиент каталога API ещё не подключён. " +
+                    "После согласования API маршрута здесь появятся товары.";
+                return;
+            }
+
+            await LoadProductsAsync();
+        }
+
+        private async Task LoadProductsAsync()
+        {
+            if (_catalogApiClient == null || _isLoading)
+            {
+                return;
+            }
+
+            _isLoading = true;
+            RetryButton.IsEnabled = false;
+            StatusText.Text = "Загружаем каталог...";
 
             try
             {
-                LoadProducts();
-            }
-            catch (Exception ex)
-            {
-                StatusText.Text = "Ошибка загрузки каталога.";
+                IReadOnlyList<ProductCardModel> products =
+                    await _catalogApiClient.GetProductsAsync();
 
-                MessageBox.Show(
-                    "Не удалось загрузить товары из базы данных:\n" +
-                    ex.Message,
-                    "GMWOG",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                _allProducts = (products ?? new List<ProductCardModel>())
+                    .Where(product => product != null)
+                    .Select(PrepareProductForDisplay)
+                    .ToList();
+
+                PopulateCategories();
+
+                _isReady = true;
+                _loadCompleted = true;
+                ApplyFilters();
+            }
+            catch
+            {
+                StatusText.Text =
+                    "Не удалось загрузить каталог. Проверьте подключение к API и повторите попытку.";
+                ProductsItemsControl.ItemsSource =
+                    new List<ProductCardModel>();
+            }
+            finally
+            {
+                _isLoading = false;
+                RetryButton.IsEnabled = true;
             }
         }
 
-        private void LoadProducts()
+        private ProductCardModel PrepareProductForDisplay(
+            ProductCardModel product)
         {
-            // Получаем товары, категории и отзывы из существующей БД.
-            var products = Core.Context.products.ToList();
-            var categories = Core.Context.categories.ToList();
-            var reviews = Core.Context.reviews.ToList();
+            product.ImagePath = GetImagePath(product.ImagePath);
 
-            _allProducts = products.Select(p =>
+            if (string.IsNullOrWhiteSpace(product.Category))
             {
-                var category = categories.FirstOrDefault(
-                    c => c.id == p.category_id);
+                product.Category = "Без категории";
+            }
 
-                var productReviews = reviews.Where(
-                    r => r.product_id == p.id).ToList();
+            if (string.IsNullOrWhiteSpace(product.AvailableText))
+            {
+                product.AvailableText = product.IsAvailable &&
+                                        product.StockQuantity > 0
+                    ? "В наличии"
+                    : "Нет в наличии";
+            }
 
-                double rating = productReviews.Count > 0
-                    ? productReviews.Average(r => (double)r.rating)
-                    : 0;
+            if (string.IsNullOrWhiteSpace(product.PackageText))
+            {
+                product.PackageText = product.ItemsPerPackage.HasValue &&
+                                      product.ItemsPerPackage.Value > 1
+                    ? "В упаковке: " + product.ItemsPerPackage.Value + " шт."
+                    : "Обычный товар";
+            }
 
-                return new ProductCardModel
-                {
-                    Id = p.id,
-                    Name = p.name,
-                    Price = p.price,
-                    Description = p.description,
-                    Category = category == null
-                        ? "Без категории"
-                        : category.name,
-                    ImagePath = GetImagePath(p.image_path),
-                    StockQuantity = p.stock_quantity,
-                    IsAvailable = p.is_available,
-                    Rating = rating,
-                    RatingText = productReviews.Count > 0
-                        ? "★ " + rating.ToString("0.0") +
-                          " (" + productReviews.Count + " отзывов)"
-                        : "Пока нет оценок",
-                    AvailableText =
-                        p.is_available && p.stock_quantity > 0
-                            ? "В наличии"
-                            : "Нет в наличии",
-                    PackageText = p.items_per_package.HasValue &&
-                                  p.items_per_package.Value > 1
-                        ? "В упаковке: " + p.items_per_package.Value + " шт."
-                        : "Обычный товар"
-                };
-            }).ToList();
+            if (string.IsNullOrWhiteSpace(product.RatingText))
+            {
+                product.RatingText = product.Rating > 0
+                    ? "★ " + product.Rating.ToString("0.0")
+                    : "Пока нет оценок";
+            }
 
+            return product;
+        }
+
+        private void PopulateCategories()
+        {
             CategoryFilter.Items.Clear();
             CategoryFilter.Items.Add("Все категории");
 
-            foreach (var category in categories.OrderBy(c => c.name))
+            foreach (string category in _allProducts
+                .Select(product => product.Category)
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Distinct()
+                .OrderBy(name => name))
             {
-                CategoryFilter.Items.Add(category.name);
+                CategoryFilter.Items.Add(category);
             }
 
             CategoryFilter.SelectedIndex = 0;
-
-            _isReady = true;
-            ApplyFilters();
         }
 
-        private string GetImagePath(string databasePath)
+        private string GetImagePath(string imagePath)
         {
-            if (string.IsNullOrWhiteSpace(databasePath))
+            if (string.IsNullOrWhiteSpace(imagePath))
             {
                 return null;
             }
 
-            // Из БД получаем, например: /images/products/xphone15.jpg.
-            // Картинки включены в WPF-проект как Resource и загружаются по Pack URI.
+            if (imagePath.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                imagePath.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
+                imagePath.IndexOf(";component/", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return imagePath;
+            }
+
+            // The API returns the stored image path; the actual images are WPF Resources.
             string fileName = Path.GetFileName(
-                databasePath.Replace((char)92, '/'));
+                imagePath.Replace((char)92, '/'));
+
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return null;
+            }
 
             return "/PR4_los_idiotos_Andreev_Butakov_Marinin_423;component/Assets/Products/" +
                    Uri.EscapeDataString(fileName);
@@ -223,7 +272,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                     p.IsAvailable && p.StockQuantity > 0);
             }
 
-            var filtered = result.ToList();
+            List<ProductCardModel> filtered = result.ToList();
 
             ProductsItemsControl.ItemsSource = filtered;
             StatusText.Text = "Найдено товаров: " + filtered.Count;
@@ -262,6 +311,13 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             AvailableOnlyCheckBox.IsChecked = false;
 
             ApplyFilters();
+        }
+
+        private async void RetryButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            await LoadProductsAsync();
         }
 
         private void Details_Click(

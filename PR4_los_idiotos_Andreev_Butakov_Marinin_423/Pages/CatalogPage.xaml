@@ -67,10 +67,20 @@
                         Click="ClearFilters_Click"/>
             </WrapPanel>
 
-            <TextBlock x:Name="StatusText"
-                       Text="Загрузка товаров..."
-                       Margin="0,0,0,15"
-                       Foreground="Gray"/>
+            <DockPanel Margin="0,0,0,15">
+                <Button x:Name="RetryButton"
+                        Content="Повторить"
+                        Padding="12,6"
+                        Margin="12,0,0,0"
+                        DockPanel.Dock="Right"
+                        Visibility="Collapsed"
+                        Click="RetryButton_Click"/>
+
+                <TextBlock x:Name="StatusText"
+                           Text="Ожидание подключения к API..."
+                           VerticalAlignment="Center"
+                           Foreground="Gray"/>
+            </DockPanel>
 
             <ItemsControl x:Name="ProductsItemsControl">
                 <ItemsControl.ItemsPanel>

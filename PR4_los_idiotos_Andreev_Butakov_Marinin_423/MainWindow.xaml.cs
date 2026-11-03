@@ -19,13 +19,10 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(
-                "Страницы входа и регистрации добавим на следующем этапе.",
-                "GMWOG",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            var authPage = new AuthPage();
+            authPage.AuthenticationCompleted += (s, args) => MainFrame.Navigate(new CatalogPage());
+            MainFrame.Navigate(authPage);
         }
-
         private void Favorites_Click(object sender, RoutedEventArgs e)
         {
             ShowNotReady("Избранное");

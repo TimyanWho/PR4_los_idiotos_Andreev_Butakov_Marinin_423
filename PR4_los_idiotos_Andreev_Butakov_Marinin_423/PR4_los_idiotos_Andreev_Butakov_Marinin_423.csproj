@@ -63,6 +63,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AuthPage.xaml.cs">
+      <DependentUpon>AuthPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="cart.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
@@ -92,6 +95,7 @@
     <Compile Include="Pages\CatalogPage.xaml.cs">
       <DependentUpon>CatalogPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\IAuthApiClient.cs" />
     <Compile Include="Pages\ProductDetailsPage.xaml.cs">
       <DependentUpon>ProductDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -115,6 +119,10 @@
     <Compile Include="users.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
+    <Page Include="AuthPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

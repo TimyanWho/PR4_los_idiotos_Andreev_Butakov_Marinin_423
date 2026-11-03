@@ -30,7 +30,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423
 
         private void Cart_Click(object sender, RoutedEventArgs e)
         {
-            ShowNotReady("Корзина");
+            MainFrame.Navigate(new CartPage());
         }
 
         private void Orders_Click(object sender, RoutedEventArgs e)

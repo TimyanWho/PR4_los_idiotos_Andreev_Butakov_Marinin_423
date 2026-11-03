@@ -96,6 +96,9 @@
       <DependentUpon>CatalogPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\IAuthApiClient.cs" />
+    <Compile Include="Pages\CartPage.xaml.cs">
+      <DependentUpon>CartPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ProductDetailsPage.xaml.cs">
       <DependentUpon>ProductDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -136,6 +139,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\CatalogPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CartPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

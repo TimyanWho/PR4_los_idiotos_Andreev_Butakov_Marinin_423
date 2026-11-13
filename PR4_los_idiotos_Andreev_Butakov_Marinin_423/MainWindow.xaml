@@ -1,12 +1,90 @@
 ﻿<Window x:Class="PR4_los_idiotos_Andreev_Butakov_Marinin_423.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PR4_los_idiotos_Andreev_Butakov_Marinin_423"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="GMWOG | Маркетплейс"
+        Width="1250"
+        Height="800"
+        MinWidth="1000"
+        MinHeight="650"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Background="#F4F6FA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Background="#172033"
+                Padding="18,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="GMWOG"
+                               Foreground="White"
+                               FontSize="25"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="МАРКЕТПЛЕЙС"
+                               Foreground="#B9C4D8"
+                               FontSize="10"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+
+                    <Button Content="Каталог"
+                            Click="Catalog_Click"
+                            Background="#28354D"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="14,9"
+                            Margin="4"/>
+
+                    <Button Content="Избранное"
+                            Click="Favorites_Click"
+                            Background="#28354D"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="14,9"
+                            Margin="4"/>
+
+                    <Button Content="Корзина"
+                            Click="Cart_Click"
+                            Background="#28354D"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="14,9"
+                            Margin="4"/>
+
+                    <Button Content="Мои заказы"
+                            Click="Orders_Click"
+                            Background="#28354D"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="14,9"
+                            Margin="4"/>
+                </StackPanel>
+
+                <Button Grid.Column="2"
+                        Content="Войти"
+                        Click="Login_Click"
+                        Background="#6478F5"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Padding="18,10"
+                        Margin="8,0,0,0"/>
+            </Grid>
+        </Border>
+
+        <Frame x:Name="MainFrame"
+               Grid.Row="1"
+               NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

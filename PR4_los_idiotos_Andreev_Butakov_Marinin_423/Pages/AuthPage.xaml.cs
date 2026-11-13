@@ -3,21 +3,25 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
 
-namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423
+
+namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 {
 
     public partial class AuthPage : Page
     {
-        private IAuthApiClient _apiClient;
+        private readonly IAuthApiClient _apiClient;
         private bool _isRegisterMode;
 
         public event EventHandler AuthenticationCompleted;
 
         public AuthPage()
+        : this(ApiService.Instance)
         {
-            InitializeComponent();
         }
+
 
         public AuthPage(IAuthApiClient apiClient)
         {

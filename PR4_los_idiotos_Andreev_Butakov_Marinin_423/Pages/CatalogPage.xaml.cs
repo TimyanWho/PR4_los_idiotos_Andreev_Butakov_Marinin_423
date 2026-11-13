@@ -16,22 +16,25 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         private List<ProductCardModel> _allProducts =
             new List<ProductCardModel>();
 
+        private readonly ApiService _apiService = new ApiService();
+
         private readonly ICatalogApiClient _catalogApiClient;
         private bool _isReady;
         private bool _isLoading;
         private bool _loadCompleted;
 
         public CatalogPage()
-            : this(null)
+        : this(ApiService.Instance)
         {
         }
+
 
         public CatalogPage(ICatalogApiClient catalogApiClient)
         {
             InitializeComponent();
 
             _catalogApiClient = catalogApiClient;
-            RetryButton.Visibility = _catalogApiClient == null
+            RetryButton.Visibility = _apiService == null
                 ? Visibility.Collapsed
                 : Visibility.Visible;
         }
@@ -43,20 +46,13 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 return;
             }
 
-            if (_catalogApiClient == null)
-            {
-                StatusText.Text =
-                    "Клиент каталога API ещё не подключён. " +
-                    "После согласования API маршрута здесь появятся товары.";
-                return;
-            }
-
             await LoadProductsAsync();
         }
 
+
         private async Task LoadProductsAsync()
         {
-            if (_catalogApiClient == null || _isLoading)
+            if (_apiService == null || _isLoading)
             {
                 return;
             }
@@ -67,11 +63,11 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
             try
             {
-                IReadOnlyList<ProductCardModel> products =
-                    await _catalogApiClient.GetProductsAsync();
+                List<Products>? productList = await _apiService.GetProductsAsync();
 
-                _allProducts = (products ?? new List<ProductCardModel>())
+                _allProducts = (productList ?? new List<Products>())
                     .Where(product => product != null)
+                    .Select(_apiService.MapToProductCard)
                     .Select(PrepareProductForDisplay)
                     .ToList();
 
@@ -94,6 +90,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 RetryButton.IsEnabled = true;
             }
         }
+
 
         private ProductCardModel PrepareProductForDisplay(
             ProductCardModel product)

@@ -1,30 +1,41 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
 
 namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 {
     public partial class FavoritesPage : Page
     {
-        private List<ProductCardModel> _favoriteProducts =
-            new List<ProductCardModel>();
+        private List<ProductCardModel> _favoriteProducts = new List<ProductCardModel>();
 
         public FavoritesPage()
         {
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdateFavoritesView();
+            if (!ApiService.Instance.IsAuthenticated)
+            {
+                StatusText.Text = "Войдите в аккаунт, чтобы просматривать избранное.";
+                return;
+            }
 
-            // TODO: Здесь будет загрузка избранного пользователя через API.
-            // После получения товаров вызываем SetFavorites(products).
+            try
+            {
+                StatusText.Text = "Загрузка избранного...";
+                var products = await ApiService.Instance.GetFavoritesAsync();
+                SetFavorites(products);
+            }
+            catch
+            {
+                StatusText.Text = "Не удалось загрузить избранное. Проверьте подключение к API.";
+            }
         }
 
         public void SetFavorites(IEnumerable<ProductCardModel> products)
@@ -37,48 +48,16 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             UpdateFavoritesView();
         }
 
-        private ProductCardModel PrepareProductForDisplay(
-            ProductCardModel product)
+        private ProductCardModel PrepareProductForDisplay(ProductCardModel product)
         {
             product.ImagePath = GetImagePath(product.ImagePath);
-
-            if (string.IsNullOrWhiteSpace(product.Category))
-            {
-                product.Category = "Без категории";
-            }
-
-            if (string.IsNullOrWhiteSpace(product.AvailableText))
-            {
-                product.AvailableText = product.IsAvailable &&
-                                        product.StockQuantity > 0
-                    ? "В наличии"
-                    : "Нет в наличии";
-            }
-
-            if (string.IsNullOrWhiteSpace(product.PackageText))
-            {
-                product.PackageText = product.ItemsPerPackage.HasValue &&
-                                      product.ItemsPerPackage.Value > 1
-                    ? "В упаковке: " + product.ItemsPerPackage.Value + " шт."
-                    : "Обычный товар";
-            }
-
-            if (string.IsNullOrWhiteSpace(product.RatingText))
-            {
-                product.RatingText = product.Rating > 0
-                    ? "★ " + product.Rating.ToString("0.0")
-                    : "Пока нет оценок";
-            }
-
+            if (string.IsNullOrWhiteSpace(product.Category)) product.Category = "Без категории";
             return product;
         }
 
         private string GetImagePath(string imagePath)
         {
-            if (string.IsNullOrWhiteSpace(imagePath))
-            {
-                return null;
-            }
+            if (string.IsNullOrWhiteSpace(imagePath)) return null;
 
             if (imagePath.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                 imagePath.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
@@ -87,13 +66,8 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 return imagePath;
             }
 
-            string fileName = Path.GetFileName(
-                imagePath.Replace((char)92, '/'));
-
-            if (string.IsNullOrWhiteSpace(fileName))
-            {
-                return null;
-            }
+            string fileName = Path.GetFileName(imagePath.Replace((char)92, '/'));
+            if (string.IsNullOrWhiteSpace(fileName)) return null;
 
             return "/PR4_los_idiotos_Andreev_Butakov_Marinin_423;component/Assets/Products/" +
                    Uri.EscapeDataString(fileName);
@@ -102,17 +76,10 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         private void UpdateFavoritesView()
         {
             FavoritesItemsControl.ItemsSource = _favoriteProducts;
-
             bool hasFavorites = _favoriteProducts.Count > 0;
 
-            FavoritesItemsControl.Visibility = hasFavorites
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-
-            EmptyText.Visibility = hasFavorites
-                ? Visibility.Collapsed
-                : Visibility.Visible;
-
+            FavoritesItemsControl.Visibility = hasFavorites ? Visibility.Visible : Visibility.Collapsed;
+            EmptyText.Visibility = hasFavorites ? Visibility.Collapsed : Visibility.Visible;
             StatusText.Text = hasFavorites
                 ? "Товаров в избранном: " + _favoriteProducts.Count
                 : "В избранном пока нет товаров.";
@@ -120,32 +87,22 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
         private ProductCardModel GetProductFromButton(object sender)
         {
-            Button button = sender as Button;
-
-            return button == null
-                ? null
-                : button.DataContext as ProductCardModel;
+            return (sender as Button)?.DataContext as ProductCardModel;
         }
 
         private void Details_Click(object sender, RoutedEventArgs e)
         {
             ProductCardModel product = GetProductFromButton(sender);
-
             if (product != null)
             {
-                NavigationService.Navigate(
-                    new ProductDetailsPage(product));
+                NavigationService.Navigate(new ProductDetailsPage(product));
             }
         }
 
-        private void AddToCart_Click(object sender, RoutedEventArgs e)
+        private async void AddToCart_Click(object sender, RoutedEventArgs e)
         {
             ProductCardModel product = GetProductFromButton(sender);
-
-            if (product == null)
-            {
-                return;
-            }
+            if (product == null) return;
 
             if (!product.IsAvailable || product.StockQuantity <= 0)
             {
@@ -153,27 +110,49 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 return;
             }
 
-            // TODO: Здесь будет вызов API добавления товара в корзину.
-
-            StatusText.Text =
-                "Добавление товара в корзину будет подключено через API.";
+            try
+            {
+                bool moved = await ApiService.Instance.MoveFavoriteToCartAsync(product.Id);
+                if (moved)
+                {
+                    _favoriteProducts.Remove(product);
+                    UpdateFavoritesView();
+                    StatusText.Text = $"Товар «{product.Name}» перенесён в корзину.";
+                }
+                else
+                {
+                    StatusText.Text = "Не удалось перенести товар в корзину.";
+                }
+            }
+            catch
+            {
+                StatusText.Text = "Ошибка соединения при переносе в корзину.";
+            }
         }
 
-        private void RemoveFavorite_Click(object sender, RoutedEventArgs e)
+
+        private async void RemoveFavorite_Click(object sender, RoutedEventArgs e)
         {
             ProductCardModel product = GetProductFromButton(sender);
+            if (product == null) return;
 
-            if (product == null)
+            try
             {
-                return;
+                bool removed = await ApiService.Instance.RemoveFavoriteAsync(product.Id);
+                if (removed)
+                {
+                    _favoriteProducts.Remove(product);
+                    UpdateFavoritesView();
+                }
+                else
+                {
+                    StatusText.Text = "Не удалось удалить товар из избранного.";
+                }
             }
-
-            // TODO: Здесь будет вызов API удаления товара из избранного.
-            // После успешного ответа API нужно удалить товар из _favoriteProducts
-            // и вызвать UpdateFavoritesView().
-
-            StatusText.Text =
-                "Удаление из избранного будет подключено через API.";
+            catch
+            {
+                StatusText.Text = "Ошибка соединения при удалении из избранного.";
+            }
         }
     }
 }

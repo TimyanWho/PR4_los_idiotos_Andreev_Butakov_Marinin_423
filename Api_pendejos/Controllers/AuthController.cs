@@ -60,9 +60,7 @@ namespace Api_pendejos.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Phone) ||
-                string.IsNullOrWhiteSpace(request.Address) ||
-                string.IsNullOrWhiteSpace(request.Login) ||
+            if (string.IsNullOrWhiteSpace(request.Login) ||
                 string.IsNullOrWhiteSpace(request.Password))
             {
                 return BadRequest(new

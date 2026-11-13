@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -40,7 +41,11 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         private readonly ObservableCollection<CartItemModel> _items = new ObservableCollection<CartItemModel>();
         public event EventHandler CheckoutRequested;
 
-        public CartPage() : this(null) { }
+        public CartPage()
+        : this(ApiService.Instance)
+        {
+        }
+
         public CartPage(ICartApiClient client)
         {
             InitializeComponent();

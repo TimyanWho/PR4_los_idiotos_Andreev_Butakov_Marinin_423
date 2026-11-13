@@ -1,4 +1,4 @@
-﻿<Page x:Class="PR4_los_idiotos_Andreev_Butakov_Marinin_423.AuthPage"
+﻿<Page x:Class="PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages.AuthPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Title="Вход и регистрация"

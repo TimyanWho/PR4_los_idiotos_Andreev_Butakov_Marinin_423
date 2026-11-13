@@ -124,7 +124,7 @@
                                     <Grid>
                                         <StackPanel>
                                             <TextBlock Text="{Binding OrderId, StringFormat=Заказ №{0}}" FontSize="18" FontWeight="Bold" Foreground="#19233A" />
-                                            <TextBlock Text="{Binding OrderDate, StringFormat={}{0:dd MMMM yyyy, HH:mm}}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                                            <TextBlock Text="{Binding OrderDate, StringFormat={}{0:dd MMMM yyyy HH:mm}}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
                                         </StackPanel>
                                         <Border HorizontalAlignment="Right" VerticalAlignment="Top" Background="#E8EEFF" CornerRadius="10" Padding="10,5">
                                             <TextBlock Text="{Binding Status}" FontSize="12" FontWeight="SemiBold" Foreground="#3157D5" />

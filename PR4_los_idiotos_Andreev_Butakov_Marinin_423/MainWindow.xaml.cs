@@ -25,6 +25,11 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423
             UserProfilePanel.Visibility = isAuth ? Visibility.Visible : Visibility.Collapsed;
 
             UserNameText.Text = isAuth ? ApiService.Instance.CurrentUserLogin : string.Empty;
+
+            AdminButton.Visibility =
+            isAuth && ApiService.Instance.IsAdministrator
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void Catalog_Click(object sender, RoutedEventArgs e)
@@ -63,6 +68,23 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423
         private void Orders_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(new OrdersPage());
+        }
+
+        private void Admin_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ApiService.Instance.IsAdministrator)
+            {
+                MessageBox.Show(
+                    "Эта страница доступна только администратору.",
+                    "Доступ запрещён",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                UpdateMenuState();
+                return;
+            }
+
+            MainFrame.Navigate(new AdminPage());
         }
     }
 }

@@ -10,5 +10,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models
     {
         public string? access_token { get; set; }
         public string? token_type { get; set; }
+        public string? role { get; set; }
     }
 }
+

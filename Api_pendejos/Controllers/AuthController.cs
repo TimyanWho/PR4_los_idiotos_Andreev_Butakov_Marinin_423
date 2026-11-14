@@ -52,7 +52,8 @@ namespace Api_pendejos.Controllers
             return Ok(new
             {
                 access_token = CreateToken(account),
-                token_type = "Bearer"
+                token_type = "Bearer",
+                role = account.Role.Name
             });
         }
 

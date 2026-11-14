@@ -9,5 +9,10 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services.Interfaces
     {
         Task<IReadOnlyList<ProductCardModel>> GetProductsAsync();
         Task<IReadOnlyList<Categories>> GetCategoriesAsync();
+        Task CreateCategoryAsync(string name);
+        Task UpdateCategoryAsync(int id, string name);
+        Task<List<AdminProductModel>> GetAdminProductsAsync();
+        Task CreateProductAsync(AdminProductModel model);
+        Task UpdateProductAsync(int id, AdminProductModel model);
     }
 }

@@ -100,12 +100,18 @@
     </ApplicationDefinition>
     <Compile Include="DTO\CartEntryDto.cs" />
     <Compile Include="DTO\CartResponseDto.cs" />
+    <Compile Include="DTO\OrderCreatedResultDto.cs" />
     <Compile Include="DTO\OrderItemDto.cs" />
     <Compile Include="DTO\OrderSummaryDto.cs" />
+    <Compile Include="DTO\PickupPointOptionDto.cs" />
     <Compile Include="DTO\ProductResponseDto.cs" />
     <Compile Include="DTO\ReviewItemDto.cs" />
     <Compile Include="DTO\ReviewsResponseDto.cs" />
+    <Compile Include="Models\AdminModels.cs" />
     <Compile Include="Models\LoginResponse.cs" />
+    <Compile Include="Pages\AdminPage.xaml.cs">
+      <DependentUpon>AdminPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\AuthPage.xaml.cs">
       <DependentUpon>AuthPage.xaml</DependentUpon>
     </Compile>
@@ -122,6 +128,9 @@
     <Compile Include="Models\Reviews.cs" />
     <Compile Include="Models\Roles.cs" />
     <Compile Include="Models\Users.cs" />
+    <Compile Include="Pages\CheckoutPage.xaml.cs">
+      <DependentUpon>CheckoutPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\FavoritesPage.xaml.cs">
       <DependentUpon>FavoritesPage.xaml</DependentUpon>
     </Compile>
@@ -152,6 +161,10 @@
     <Compile Include="Services\OrdersApiClient .cs" />
     <Compile Include="Services\ProductDetailsApiClient.cs" />
     <Compile Include="Services\ProductMapper.cs" />
+    <Page Include="Pages\AdminPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\AuthPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -168,6 +181,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\CheckoutPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\FavoritesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

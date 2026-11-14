@@ -108,9 +108,20 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
         private void Checkout_Click(object sender, RoutedEventArgs e)
         {
-            if (_items.Count == 0) return;
-            CheckoutRequested?.Invoke(this, EventArgs.Empty);
-            StatusText.Text = "Экран оформления заказа будет следующим этапом.";
+            if (_items.Count == 0)
+            {
+                StatusText.Text = "Корзина пуста.";
+                return;
+            }
+
+            if (!ApiService.Instance.IsAuthenticated)
+            {
+                StatusText.Text = "Сначала войдите в аккаунт.";
+                return;
+            }
+
+            NavigationService?.Navigate(
+                new CheckoutPage(_items.ToList()));
         }
 
         private void BackToCatalog_Click(object sender, RoutedEventArgs e)

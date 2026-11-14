@@ -2,41 +2,59 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Threading.Tasks;
 
-namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
+public class ApiHttpClient
 {
-    public class ApiHttpClient
+    public HttpClient Http { get; }
+    public JsonSerializerOptions JsonOptions { get; } = new()
     {
-        public HttpClient Http { get; }
-        public JsonSerializerOptions JsonOptions { get; } = new()
+        PropertyNameCaseInsensitive = true
+    };
+
+    public string? AccessToken { get; private set; }
+    public string? CurrentUserLogin { get; private set; }
+    public bool IsAdministrator { get; private set; }
+    public bool IsAuthenticated => !string.IsNullOrEmpty(AccessToken);
+
+    public ApiHttpClient()
+    {
+        Http = new HttpClient
         {
-            PropertyNameCaseInsensitive = true
+            BaseAddress = new Uri("http://localhost:5023/")
         };
+    }
 
-        public string? AccessToken { get; private set; }
-        public string? CurrentUserLogin { get; private set; }
-        public bool IsAuthenticated => !string.IsNullOrEmpty(AccessToken);
+    public void SetSession(string token, string login, bool isAdministrator)
+    {
+        AccessToken = token;
+        CurrentUserLogin = login;
+        IsAdministrator = isAdministrator;
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
 
-        public ApiHttpClient()
+    public void ClearSession()
+    {
+        AccessToken = null;
+        CurrentUserLogin = null;
+        IsAdministrator = false;
+        Http.DefaultRequestHeaders.Authorization = null;
+    }
+
+    public async Task EnsureSuccessAsync(HttpResponseMessage response)
+    {
+        if (!response.IsSuccessStatusCode)
         {
-            Http = new HttpClient
+            var json = await response.Content.ReadAsStringAsync();
+            try
             {
-                BaseAddress = new Uri("http://localhost:5023/")
-            };
-        }
+                using var doc = JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("message", out var msg))
+                    throw new Exception(msg.GetString());
+            }
+            catch (JsonException) { }
 
-        public void SetSession(string token, string login)
-        {
-            AccessToken = token;
-            CurrentUserLogin = login;
-            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        }
-
-        public void ClearSession()
-        {
-            AccessToken = null;
-            CurrentUserLogin = null;
-            Http.DefaultRequestHeaders.Authorization = null;
+            throw new Exception($"Ошибка сервера: {(int)response.StatusCode}");
         }
     }
 }

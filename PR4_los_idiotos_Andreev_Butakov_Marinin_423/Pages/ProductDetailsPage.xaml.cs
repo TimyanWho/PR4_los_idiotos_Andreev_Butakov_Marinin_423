@@ -23,7 +23,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         {
         }
 
-
         public ProductDetailsPage(
             ProductCardModel product,
             IProductDetailsApiClient apiClient)
@@ -167,25 +166,16 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 requireAvailableProduct: true);
         }
 
-
-        private async void BuyNow_Click(object sender, RoutedEventArgs e)
+        private void BuyNow_Click(object sender, RoutedEventArgs e)
         {
             if (!EnsureAuthenticated() || !IsProductAvailable())
             {
                 return;
             }
 
-            try
-            {
-                await ApiService.Instance.Cart.AddToCartAsync(_product.Id, 1);
-                NavigationService?.Navigate(new CartPage());
-            }
-            catch
-            {
-                ActionStatusText.Text = "Не удалось оформить покупку. Проверьте подключение к API.";
-            }
+            NavigationService?.Navigate(
+                new CheckoutPage(_product, 1));
         }
-
 
         private async Task RunAuthenticatedActionAsync(
             Func<Task> request,

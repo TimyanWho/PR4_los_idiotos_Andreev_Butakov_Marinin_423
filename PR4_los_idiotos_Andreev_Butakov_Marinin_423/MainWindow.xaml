@@ -76,6 +76,15 @@
             BorderThickness="0"
             Padding="14,9"
             Margin="4"/>
+                    <Button x:Name="AdminButton"
+        Content="Администрирование"
+        Click="Admin_Click"
+        Visibility="Collapsed"
+        Background="#8B5CF6"
+        Foreground="White"
+        BorderThickness="0"
+        Padding="14,9"
+        Margin="4"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">

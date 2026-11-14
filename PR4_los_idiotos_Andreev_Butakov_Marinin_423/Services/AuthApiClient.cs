@@ -2,10 +2,11 @@
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Net.Http.Json;
 using System.Linq;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 public class AuthApiClient : IAuthApiClient
 {
@@ -20,7 +21,8 @@ public class AuthApiClient : IAuthApiClient
         var data = await response.Content.ReadFromJsonAsync<LoginResponse>(_client.JsonOptions);
         if (string.IsNullOrEmpty(data?.access_token)) return false;
 
-        _client.SetSession(data.access_token, login);
+        bool isAdmin = string.Equals(data.role, "Администратор", StringComparison.OrdinalIgnoreCase);
+        _client.SetSession(data.access_token, login, isAdmin);
         return true;
     }
 

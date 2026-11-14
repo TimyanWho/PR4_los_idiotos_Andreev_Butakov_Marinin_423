@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.DTO;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services.Interfaces;
 
 namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 {
@@ -29,7 +31,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             try
             {
                 StatusText.Text = "Загрузка избранного...";
-                var products = await ApiService.Instance.GetFavoritesAsync();
+                var products = await ApiService.Instance.Favorites.GetFavoritesAsync();
                 SetFavorites(products);
             }
             catch
@@ -112,7 +114,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
             try
             {
-                bool moved = await ApiService.Instance.MoveFavoriteToCartAsync(product.Id);
+                bool moved = await ApiService.Instance.Favorites.MoveFavoriteToCartAsync(product.Id);
                 if (moved)
                 {
                     _favoriteProducts.Remove(product);
@@ -138,7 +140,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
             try
             {
-                bool removed = await ApiService.Instance.RemoveFavoriteAsync(product.Id);
+                bool removed = await ApiService.Instance.Favorites.RemoveFavoriteAsync(product.Id);
                 if (removed)
                 {
                     _favoriteProducts.Remove(product);

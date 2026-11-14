@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.DTO;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services.Interfaces;
 
 
 namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
@@ -18,7 +19,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         public event EventHandler AuthenticationCompleted;
 
         public AuthPage()
-        : this(ApiService.Instance)
+        : this(ApiService.Instance.Auth)
         {
         }
 

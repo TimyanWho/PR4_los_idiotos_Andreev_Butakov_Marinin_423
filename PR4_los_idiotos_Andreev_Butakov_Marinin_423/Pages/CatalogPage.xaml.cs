@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.DTO;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services.Interfaces;
 
 namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 {
@@ -20,7 +22,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         private bool _isLoading;
         private bool _loadCompleted;
 
-        public CatalogPage() : this(ApiService.Instance)
+        public CatalogPage() : this(ApiService.Instance.Catalog)
         {
         }
 
@@ -354,7 +356,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
             try
             {
-                await ApiService.Instance.AddToCartAsync(product.Id, 1);
+                await ApiService.Instance.Cart.AddToCartAsync(product.Id, 1);
                 StatusText.Text = $"Товар «{product.Name}» добавлен в корзину.";
             }
             catch

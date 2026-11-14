@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Models;
 using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.DTO;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services.Interfaces;
 
 namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 {
@@ -17,7 +19,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         private bool _reviewsLoaded;
 
         public ProductDetailsPage(ProductCardModel product)
-            : this(product, ApiService.Instance)
+            : this(product, ApiService.Instance.ProductDetails)
         {
         }
 
@@ -72,8 +74,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
         private void UpdateReviewAccess()
         {
-            bool isAuthenticated = _apiClient != null &&
-                                   _apiClient.IsAuthenticated;
+            bool isAuthenticated = _apiClient != null && ApiService.Instance.IsAuthenticated;
 
             ReviewEditorPanel.Visibility = isAuthenticated
                 ? Visibility.Visible
@@ -150,28 +151,24 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             }
         }
 
-        private async void AddToFavorites_Click(
-            object sender,
-            RoutedEventArgs e)
+        private async void AddToFavorites_Click(object sender, RoutedEventArgs e)
         {
             await RunAuthenticatedActionAsync(
-                () => _apiClient.AddToFavoritesAsync(_product.Id),
+                () => ApiService.Instance.Favorites.AddToFavoritesAsync(_product.Id),
                 "Товар добавлен в избранное.");
         }
 
-        private async void AddToCart_Click(
-            object sender,
-            RoutedEventArgs e)
+
+        private async void AddToCart_Click(object sender, RoutedEventArgs e)
         {
             await RunAuthenticatedActionAsync(
-                () => _apiClient.AddToCartAsync(_product.Id, 1),
+                () => ApiService.Instance.Cart.AddToCartAsync(_product.Id, 1),
                 "Товар добавлен в корзину.",
                 requireAvailableProduct: true);
         }
 
-        private async void BuyNow_Click(
-            object sender,
-            RoutedEventArgs e)
+
+        private async void BuyNow_Click(object sender, RoutedEventArgs e)
         {
             if (!EnsureAuthenticated() || !IsProductAvailable())
             {
@@ -180,7 +177,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
             try
             {
-                await _apiClient.AddToCartAsync(_product.Id, 1);
+                await ApiService.Instance.Cart.AddToCartAsync(_product.Id, 1);
                 NavigationService?.Navigate(new CartPage());
             }
             catch
@@ -188,6 +185,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 ActionStatusText.Text = "Не удалось оформить покупку. Проверьте подключение к API.";
             }
         }
+
 
         private async Task RunAuthenticatedActionAsync(
             Func<Task> request,
@@ -225,20 +223,19 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         {
             if (_apiClient == null)
             {
-                ActionStatusText.Text =
-                    "Это действие станет доступно после подключения API.";
+                ActionStatusText.Text = "Это действие станет доступно после подключения API.";
                 return false;
             }
 
-            if (!_apiClient.IsAuthenticated)
+            if (!ApiService.Instance.IsAuthenticated)
             {
-                ActionStatusText.Text =
-                    "Сначала войдите в аккаунт, чтобы выполнить это действие.";
+                ActionStatusText.Text = "Сначала войдите в аккаунт, чтобы выполнить это действие.";
                 return false;
             }
 
             return true;
         }
+
 
         private bool IsProductAvailable()
         {

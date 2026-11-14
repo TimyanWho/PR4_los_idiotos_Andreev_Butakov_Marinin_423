@@ -19,7 +19,6 @@ namespace Api_pendejos.Controllers
             _context = context;
         }
 
-        // 1. ПОЛУЧЕНИЕ КАТАЛОГА
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetAll(
@@ -39,25 +38,21 @@ namespace Api_pendejos.Controllers
                 query = query.Where(p => p.IsAvailable == true && p.StockQuantity > 0);
             }
 
-            // Фильтр: Поиск по названию
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(p => p.Name.Contains(search));
             }
 
-            // Фильтр: По категории
             if (categoryId.HasValue)
             {
                 query = query.Where(p => p.CategoryId == categoryId.Value);
             }
 
-            // Фильтр: По минимальной цене
             if (minPrice.HasValue)
             {
                 query = query.Where(p => p.Price >= minPrice.Value);
             }
 
-            // Фильтр: По максимальной цене
             if (maxPrice.HasValue)
             {
                 query = query.Where(p => p.Price <= maxPrice.Value);
@@ -80,7 +75,6 @@ namespace Api_pendejos.Controllers
             return Ok(products);
         }
 
-        // 2. ДЕТАЛИ ТОВАРА (Доступно гостю)
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
@@ -109,7 +103,6 @@ namespace Api_pendejos.Controllers
             return Ok(response);
         }
 
-        // 3. ДОБАВЛЕНИЕ ТОВАРА (Только Администратор)
         [HttpPost]
         [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Create([FromBody] SaveProductRequest request)
@@ -136,7 +129,6 @@ namespace Api_pendejos.Controllers
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
         }
 
-        // 4. РЕДАКТИРОВАНИЕ ТОВАРА (Только Администратор)
         [HttpPut("{id}")]
         [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Update(int id, [FromBody] SaveProductRequest request)
@@ -160,7 +152,6 @@ namespace Api_pendejos.Controllers
             return Ok(new { message = "Товар успешно обновлен" });
         }
 
-        // 5. УДАЛЕНИЕ ТОВАРА (Только Администратор)
         [HttpDelete("{id}")]
         [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Delete(int id)

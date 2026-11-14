@@ -1,4 +1,6 @@
 ﻿using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,14 +29,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         public event PropertyChangedEventHandler PropertyChanged;
     }
 
-    // Контракт WPF-клиента; маршруты API определит команда API.
-    public interface ICartApiClient
-    {
-        Task<IList<CartItemModel>> GetItemsAsync();
-        Task<bool> UpdateQuantityAsync(int productId, int quantity);
-        Task<bool> RemoveItemAsync(int productId);
-    }
-
     public partial class CartPage : Page
     {
         private readonly ICartApiClient _client;
@@ -42,7 +36,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         public event EventHandler CheckoutRequested;
 
         public CartPage()
-        : this(ApiService.Instance)
+        : this(ApiService.Instance.Cart)
         {
         }
 

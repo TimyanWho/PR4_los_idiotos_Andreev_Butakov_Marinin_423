@@ -98,6 +98,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DTO\CartEntryDto.cs" />
+    <Compile Include="DTO\CartResponseDto.cs" />
+    <Compile Include="DTO\OrderItemDto.cs" />
+    <Compile Include="DTO\OrderSummaryDto.cs" />
+    <Compile Include="DTO\ProductResponseDto.cs" />
+    <Compile Include="DTO\ReviewItemDto.cs" />
+    <Compile Include="DTO\ReviewsResponseDto.cs" />
+    <Compile Include="Models\LoginResponse.cs" />
     <Compile Include="Pages\AuthPage.xaml.cs">
       <DependentUpon>AuthPage.xaml</DependentUpon>
     </Compile>
@@ -120,7 +128,7 @@
     <Compile Include="Pages\CatalogPage.xaml.cs">
       <DependentUpon>CatalogPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\IAuthApiClient.cs" />
+    <Compile Include="Services\ApiHttpClient.cs" />
     <Compile Include="Pages\CartPage.xaml.cs">
       <DependentUpon>CartPage.xaml</DependentUpon>
     </Compile>
@@ -130,9 +138,20 @@
     <Compile Include="Pages\ProductDetailsPage.xaml.cs">
       <DependentUpon>ProductDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\ICatalogApiClient.cs" />
-    <Compile Include="Services\IProductDetailsApiClient.cs" />
     <Compile Include="Services\ApiService.cs" />
+    <Compile Include="Services\AuthApiClient.cs" />
+    <Compile Include="Services\CartApiClient.cs" />
+    <Compile Include="Services\CatalogApiClient.cs" />
+    <Compile Include="Services\FavoritesApiClient.cs" />
+    <Compile Include="Services\Interfaces\IAuthApiClient.cs" />
+    <Compile Include="Services\Interfaces\ICartApiClient.cs" />
+    <Compile Include="Services\Interfaces\ICatalogApiClient.cs" />
+    <Compile Include="Services\Interfaces\IFavoritesApiClient.cs" />
+    <Compile Include="Services\Interfaces\IOrdersApiClient.cs" />
+    <Compile Include="Services\Interfaces\IProductDetailsApiClient.cs" />
+    <Compile Include="Services\OrdersApiClient .cs" />
+    <Compile Include="Services\ProductDetailsApiClient.cs" />
+    <Compile Include="Services\ProductMapper.cs" />
     <Page Include="Pages\AuthPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

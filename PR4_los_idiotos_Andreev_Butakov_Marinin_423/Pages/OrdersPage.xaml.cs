@@ -1,4 +1,6 @@
 ﻿using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.DTO;
+using PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,21 +12,18 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 {
     public partial class OrdersPage : Page
     {
-        private readonly IOrdersApiClient _ordersApiClient;
         private readonly ObservableCollection<OrderSummaryDto> _orders = new ObservableCollection<OrderSummaryDto>();
+        private readonly IOrdersApiClient _ordersApiClient;
 
-        public OrdersPage()
-        : this(ApiService.Instance)
+        public OrdersPage() : this(ApiService.Instance.Orders)
         {
         }
-
 
         public OrdersPage(IOrdersApiClient ordersApiClient)
         {
             InitializeComponent();
             _ordersApiClient = ordersApiClient;
             OrdersList.ItemsSource = _orders;
-            Loaded += OrdersPage_Loaded;
         }
 
         private async void OrdersPage_Loaded(object sender, RoutedEventArgs e)
@@ -120,30 +119,5 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             EmptyTitleText.Text = title;
             EmptyDescriptionText.Text = description;
         }
-    }
-
-    // Контракт для подключения клиента API, который реализует участник команды.
-    public interface IOrdersApiClient
-    {
-        Task<IReadOnlyList<OrderSummaryDto>> GetMyOrdersAsync(bool newestFirst);
-    }
-
-    // Модели ответа WPF-клиента; API может преобразовать свои DTO в эти типы.
-    public class OrderSummaryDto
-    {
-        public int OrderId { get; set; }
-        public DateTime OrderDate { get; set; }
-        public string Status { get; set; }
-        public string DeliverySummary { get; set; }
-        public decimal TotalAmount { get; set; }
-        public IReadOnlyList<OrderItemDto> Items { get; set; }
-    }
-
-    public class OrderItemDto
-    {
-        public string ProductName { get; set; }
-        public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
-        public decimal LineTotal { get; set; }
     }
 }

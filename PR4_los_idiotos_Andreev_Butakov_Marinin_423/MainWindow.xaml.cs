@@ -45,7 +45,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            ApiService.Instance.Logout();
+            ApiService.Instance.Auth.Logout();
             UpdateMenuState();
             MainFrame.Navigate(new CatalogPage());
         }

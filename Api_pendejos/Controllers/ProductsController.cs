@@ -26,15 +26,15 @@ namespace Api_pendejos.Controllers
             [FromQuery] string? search = null,
             [FromQuery] int? categoryId = null,
             [FromQuery] decimal? minPrice = null,
-            [FromQuery] decimal? maxPrice = null)
+            [FromQuery] decimal? maxPrice = null,
+            [FromQuery] bool onlyAvailable = false)
         {
             var query = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Reviews)
                 .AsQueryable();
 
-            // Если запрашивает НЕ администратор, показываем только доступные товары на складе
-            if (!User.IsInRole("Администратор"))
+            if (onlyAvailable)
             {
                 query = query.Where(p => p.IsAvailable == true && p.StockQuantity > 0);
             }

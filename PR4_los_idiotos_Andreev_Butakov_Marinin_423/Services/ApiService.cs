@@ -28,6 +28,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
 
         private string? _accessToken;
         public bool IsAuthenticated => !string.IsNullOrEmpty(_accessToken);
+        public string? CurrentUserLogin { get; private set; }
 
         public ApiService()
         {
@@ -61,6 +62,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
             if (!string.IsNullOrEmpty(data?.access_token))
             {
                 _accessToken = data.access_token;
+                CurrentUserLogin = login; // <--- Добавьте эту строку
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", _accessToken);
                 return true;
@@ -86,6 +88,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
         public void Logout()
         {
             _accessToken = null;
+            CurrentUserLogin = null;
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
 
@@ -108,10 +111,42 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
 
         async Task<IReadOnlyList<ProductCardModel>> ICatalogApiClient.GetProductsAsync()
         {
-            var products = await GetProductsAsync();
-            if (products == null) return new List<ProductCardModel>();
-            return products.Select(MapToProductCard).ToList();
+            try
+            {
+                var items = await _httpClient.GetFromJsonAsync<List<ProductResponseDto>>("api/products", _jsonOptions);
+                if (items == null)
+                {
+                    return new List<ProductCardModel>();
+                }
+
+                return items.Select(p => new ProductCardModel
+                {
+                    Id = p.Id,
+                    Name = p.Name ?? "Без названия",
+                    Price = p.Price,
+                    Description = p.Description ?? "",
+                    Category = string.IsNullOrWhiteSpace(p.CategoryName) ? "Без категории" : p.CategoryName,
+                    ImagePath = p.ImagePath ?? "",
+                    StockQuantity = p.StockQuantity,
+                    ItemsPerPackage = p.ItemsPerPackage,
+                    IsAvailable = p.IsAvailable && p.StockQuantity > 0,
+                    Rating = p.Rating,
+                    RatingText = p.Rating > 0 ? $"★ {p.Rating:F1}" : "Пока нет оценок",
+                    AvailableText = (p.IsAvailable && p.StockQuantity > 0)
+                        ? $"В наличии ({p.StockQuantity} шт.)"
+                        : "Нет в наличии",
+                    PackageText = p.ItemsPerPackage.HasValue && p.ItemsPerPackage.Value > 1
+                        ? $"В упаковке: {p.ItemsPerPackage} шт."
+                        : "Обычный товар"
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Ошибка загрузки каталога: {ex.Message}");
+                return new List<ProductCardModel>();
+            }
         }
+
 
         public ProductCardModel MapToProductCard(Products p)
         {
@@ -141,14 +176,56 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
             };
         }
 
+        public async Task<IReadOnlyList<Categories>> GetCategoriesAsync()
+        {
+            try
+            {
+                var categories = await _httpClient.GetFromJsonAsync<List<Categories>>("api/categories", _jsonOptions);
+                return categories ?? new List<Categories>();
+            }
+            catch
+            {
+                return new List<Categories>();
+            }
+        }
+
         // ==========================================
         // 3. КОРЗИНА (ICartApiClient)
         // ==========================================
 
+        private class CartResponseDto
+        {
+            public List<CartEntryDto>? Items { get; set; }
+            public decimal Total { get; set; }
+        }
+
+        private class CartEntryDto
+        {
+            public ProductResponseDto? Product { get; set; }
+            public int Quantity { get; set; }
+            public decimal LineTotal { get; set; }
+        }
+
         public async Task<IList<CartItemModel>> GetItemsAsync()
         {
-            var items = await _httpClient.GetFromJsonAsync<List<CartItemModel>>("api/cart", _jsonOptions);
-            return items ?? new List<CartItemModel>();
+            var response = await _httpClient.GetFromJsonAsync<CartResponseDto>("api/cart", _jsonOptions);
+            if (response?.Items == null)
+            {
+                return new List<CartItemModel>();
+            }
+
+            return response.Items
+                .Where(i => i.Product != null)
+                .Select(i => new CartItemModel
+                {
+                    ProductId = i.Product!.Id,
+                    Name = i.Product.Name ?? "Без названия",
+                    Description = i.Product.Description ?? "",
+                    UnitPrice = i.Product.Price,
+                    StockQuantity = i.Product.StockQuantity,
+                    Quantity = i.Quantity
+                })
+                .ToList();
         }
 
         public async Task<bool> UpdateQuantityAsync(int productId, int quantity)
@@ -165,7 +242,8 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
 
         public async Task AddToCartAsync(int productId, int quantity = 1)
         {
-            await _httpClient.PostAsJsonAsync("api/cart", new { ProductId = productId, Quantity = quantity });
+            var response = await _httpClient.PostAsJsonAsync("api/cart", new { ProductId = productId, Quantity = quantity });
+            response.EnsureSuccessStatusCode();
         }
 
         // ==========================================
@@ -216,7 +294,8 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
 
         public async Task AddToFavoritesAsync(int productId)
         {
-            await _httpClient.PostAsJsonAsync("api/favorites", new { ProductId = productId });
+            var response = await _httpClient.PostAsJsonAsync("api/favorites", new { ProductId = productId });
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task<bool> RemoveFavoriteAsync(int productId)
@@ -250,15 +329,50 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Services
         // 6. ОТЗЫВЫ (IProductDetailsApiClient)
         // ==========================================
 
+        private class ReviewsResponseDto
+        {
+            public int ProductId { get; set; }
+            public double Average { get; set; }
+            public List<ReviewItemDto>? Reviews { get; set; }
+        }
+
+        private class ReviewItemDto
+        {
+            public int Id { get; set; }
+            public int Rating { get; set; }
+            public string? Comment { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public string? Author { get; set; }
+        }
+
         public async Task<IReadOnlyList<ProductReviewModel>> GetProductReviewsAsync(int productId)
         {
-            var reviews = await _httpClient.GetFromJsonAsync<List<ProductReviewModel>>($"api/products/{productId}/reviews", _jsonOptions);
-            return reviews ?? new List<ProductReviewModel>();
+            var response = await _httpClient.GetFromJsonAsync<ReviewsResponseDto>($"api/reviews?productId={productId}", _jsonOptions);
+            if (response?.Reviews == null)
+            {
+                return new List<ProductReviewModel>();
+            }
+
+            return response.Reviews.Select(r => new ProductReviewModel
+            {
+                AuthorName = string.IsNullOrWhiteSpace(r.Author) ? "Пользователь" : r.Author,
+                Rating = r.Rating,
+                Text = r.Comment ?? "",
+                CreatedAt = r.CreatedAt
+            }).ToList();
         }
 
         public async Task SubmitReviewAsync(int productId, int rating, string text)
         {
-            await _httpClient.PostAsJsonAsync($"api/products/{productId}/reviews", new { Rating = rating, Text = text });
+            var payload = new
+            {
+                ProductId = productId,
+                Rating = rating,
+                Comment = text
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/reviews", payload);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

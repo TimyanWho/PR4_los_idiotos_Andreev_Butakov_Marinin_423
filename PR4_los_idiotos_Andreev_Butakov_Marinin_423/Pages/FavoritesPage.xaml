@@ -87,9 +87,11 @@
                                         Click="Details_Click"/>
 
                                 <Button Content="В корзину"
-                                        Padding="10,7"
-                                        Margin="0,0,0,6"
-                                        Click="AddToCart_Click"/>
+                                    Padding="10,7"
+                                    Margin="0,0,0,6"
+                                    HorizontalAlignment="Stretch"
+                                    IsEnabled="{Binding IsAvailable}"
+                                    Click="AddToCart_Click"/>
 
                                 <Button Content="Убрать из избранного"
                                         Padding="10,7"

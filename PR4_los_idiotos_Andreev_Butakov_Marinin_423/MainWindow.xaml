@@ -35,51 +35,80 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center">
+            Orientation="Horizontal"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
 
                     <Button Content="Каталог"
-                            Click="Catalog_Click"
-                            Background="#28354D"
-                            Foreground="White"
-                            BorderThickness="0"
-                            Padding="14,9"
-                            Margin="4"/>
+            Click="Catalog_Click"
+            Background="#28354D"
+            Foreground="White"
+            BorderThickness="0"
+            Padding="14,9"
+            Margin="4"/>
 
-                    <Button Content="Избранное"
-                            Click="Favorites_Click"
-                            Background="#28354D"
-                            Foreground="White"
-                            BorderThickness="0"
-                            Padding="14,9"
-                            Margin="4"/>
+                    <Button x:Name="FavoritesButton"
+            Content="Избранное"
+            Click="Favorites_Click"
+            Visibility="Collapsed"
+            Background="#28354D"
+            Foreground="White"
+            BorderThickness="0"
+            Padding="14,9"
+            Margin="4"/>
 
-                    <Button Content="Корзина"
-                            Click="Cart_Click"
-                            Background="#28354D"
-                            Foreground="White"
-                            BorderThickness="0"
-                            Padding="14,9"
-                            Margin="4"/>
+                    <Button x:Name="CartButton"
+            Content="Корзина"
+            Click="Cart_Click"
+            Visibility="Collapsed"
+            Background="#28354D"
+            Foreground="White"
+            BorderThickness="0"
+            Padding="14,9"
+            Margin="4"/>
 
-                    <Button Content="Мои заказы"
-                            Click="Orders_Click"
-                            Background="#28354D"
-                            Foreground="White"
-                            BorderThickness="0"
-                            Padding="14,9"
-                            Margin="4"/>
+                    <Button x:Name="OrdersButton"
+            Content="Мои заказы"
+            Click="Orders_Click"
+            Visibility="Collapsed"
+            Background="#28354D"
+            Foreground="White"
+            BorderThickness="0"
+            Padding="14,9"
+            Margin="4"/>
                 </StackPanel>
 
-                <Button Grid.Column="2"
-                        Content="Войти"
-                        Click="Login_Click"
-                        Background="#6478F5"
-                        Foreground="White"
-                        BorderThickness="0"
-                        Padding="18,10"
-                        Margin="8,0,0,0"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="LoginButton"
+            Content="Войти"
+            Click="Login_Click"
+            Background="#6478F5"
+            Foreground="White"
+            BorderThickness="0"
+            Padding="18,10"
+            Margin="8,0,0,0"/>
+
+                    <StackPanel x:Name="UserProfilePanel"
+                Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Visibility="Collapsed"
+                Margin="8,0,0,0">
+
+                        <TextBlock x:Name="UserNameText"
+                   Foreground="White"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"
+                   Margin="0,0,12,0"/>
+
+                        <Button Content="Выйти"
+                Click="Logout_Click"
+                Background="#B42318"
+                Foreground="White"
+                BorderThickness="0"
+                Padding="14,10"/>
+                    </StackPanel>
+                </StackPanel>
+
             </Grid>
         </Border>
 

@@ -135,6 +135,13 @@
                                         Padding="10,7"
                                         HorizontalAlignment="Stretch"
                                         Click="Details_Click"/>
+
+                                <Button Content="В корзину"
+                                    Padding="10,7"
+                                    Margin="0,6,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    IsEnabled="{Binding IsAvailable}"
+                                    Click="AddToCart_Click"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>

@@ -62,6 +62,14 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
         private async Task LoadOrdersAsync(bool newestFirst)
         {
+            if (!ApiService.Instance.IsAuthenticated)
+            {
+                ShowEmptyState(
+                    "Требуется авторизация",
+                    "Войдите в аккаунт, чтобы увидеть историю ваших заказов.");
+                return;
+            }
+
             if (_ordersApiClient == null)
             {
                 ShowEmptyState(

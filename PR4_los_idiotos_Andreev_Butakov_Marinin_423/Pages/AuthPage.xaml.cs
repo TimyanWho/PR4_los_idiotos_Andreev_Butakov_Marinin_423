@@ -98,21 +98,40 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             StatusText.Text = string.Empty;
             try
             {
-                var succeeded = _isRegisterMode
-                    ? await _apiClient.RegisterAsync(login, password)
-                    : await _apiClient.LoginAsync(login, password);
-
-                if (!succeeded)
+                if (_isRegisterMode)
                 {
-                    StatusText.Text = _isRegisterMode
-                        ? "Не удалось создать аккаунт. Проверьте данные и повторите попытку."
-                        : "Не удалось войти. Проверьте логин и пароль.";
-                    return;
+                    bool registered = await _apiClient.RegisterAsync(login, password);
+                    if (!registered)
+                    {
+                        StatusText.Text = "Не удалось создать аккаунт. Возможно, такой логин уже занят.";
+                        return;
+                    }
+
+                    bool loggedIn = await _apiClient.LoginAsync(login, password);
+                    if (!loggedIn)
+                    {
+                        StatusText.Text = "Аккаунт создан, но не удалось войти автоматически. Войдите вручную.";
+                        SetMode(false);
+                        return;
+                    }
+
+                    StatusText.Text = "Аккаунт создан, вход выполнен.";
+                }
+                else
+                {
+                    bool loggedIn = await _apiClient.LoginAsync(login, password);
+                    if (!loggedIn)
+                    {
+                        StatusText.Text = "Не удалось войти. Проверьте логин и пароль.";
+                        return;
+                    }
+
+                    StatusText.Text = "Вход выполнен.";
                 }
 
-                StatusText.Text = _isRegisterMode ? "Аккаунт создан." : "Вход выполнен.";
                 AuthenticationCompleted?.Invoke(this, EventArgs.Empty);
             }
+
             catch
             {
                 StatusText.Text = "Не удалось связаться с API. Проверьте подключение и повторите попытку.";

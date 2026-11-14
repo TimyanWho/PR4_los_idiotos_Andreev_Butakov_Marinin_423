@@ -21,7 +21,7 @@ namespace Api_pendejos.Controllers
 
         private int GetUserId()
         {
-            var claim = User.FindFirstValue("sub");
+            var claim = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.TryParse(claim, out var id) ? id : 0;
         }
 

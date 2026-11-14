@@ -17,9 +17,10 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         private bool _reviewsLoaded;
 
         public ProductDetailsPage(ProductCardModel product)
-            : this(product, null)
+            : this(product, ApiService.Instance)
         {
         }
+
 
         public ProductDetailsPage(
             ProductCardModel product,
@@ -168,22 +169,24 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 requireAvailableProduct: true);
         }
 
-        private void BuyNow_Click(
+        private async void BuyNow_Click(
             object sender,
             RoutedEventArgs e)
         {
-            if (!EnsureAuthenticated())
+            if (!EnsureAuthenticated() || !IsProductAvailable())
             {
                 return;
             }
 
-            if (!IsProductAvailable())
+            try
             {
-                return;
+                await _apiClient.AddToCartAsync(_product.Id, 1);
+                NavigationService?.Navigate(new CartPage());
             }
-
-            ActionStatusText.Text =
-                "Оформление покупки появится на странице заказа с выбором доставки или ПВЗ.";
+            catch
+            {
+                ActionStatusText.Text = "Не удалось оформить покупку. Проверьте подключение к API.";
+            }
         }
 
         private async Task RunAuthenticatedActionAsync(

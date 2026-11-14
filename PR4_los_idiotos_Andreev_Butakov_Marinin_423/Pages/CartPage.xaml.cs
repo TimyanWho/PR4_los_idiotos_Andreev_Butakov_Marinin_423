@@ -58,6 +58,16 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         private async Task LoadAsync()
         {
             if (_client == null) return;
+
+            if (!ApiService.Instance.IsAuthenticated)
+            {
+                ApiStatusPanel.Visibility = Visibility.Visible;
+                EmptyStatePanel.Visibility = Visibility.Collapsed;
+                CartItemsList.Visibility = Visibility.Collapsed;
+                ApiStatusText.Text = "Войдите в аккаунт, чтобы просматривать корзину.";
+                return;
+            }
+
             try
             {
                 var result = await _client.GetItemsAsync();
@@ -70,9 +80,11 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             }
             catch
             {
+                ApiStatusPanel.Visibility = Visibility.Visible;
                 ApiStatusText.Text = "Не удалось загрузить корзину. Проверьте подключение к API.";
             }
         }
+
 
         private async void QuantityButton_Click(object sender, RoutedEventArgs e)
         {

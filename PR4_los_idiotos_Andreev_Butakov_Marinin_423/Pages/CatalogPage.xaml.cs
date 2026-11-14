@@ -13,28 +13,23 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 {
     public partial class CatalogPage : Page
     {
-        private List<ProductCardModel> _allProducts =
-            new List<ProductCardModel>();
-
-        private readonly ApiService _apiService = new ApiService();
+        private List<ProductCardModel> _allProducts = new List<ProductCardModel>();
 
         private readonly ICatalogApiClient _catalogApiClient;
         private bool _isReady;
         private bool _isLoading;
         private bool _loadCompleted;
 
-        public CatalogPage()
-        : this(ApiService.Instance)
+        public CatalogPage() : this(ApiService.Instance)
         {
         }
-
 
         public CatalogPage(ICatalogApiClient catalogApiClient)
         {
             InitializeComponent();
 
             _catalogApiClient = catalogApiClient;
-            RetryButton.Visibility = _apiService == null
+            RetryButton.Visibility = _catalogApiClient == null
                 ? Visibility.Collapsed
                 : Visibility.Visible;
         }
@@ -49,10 +44,9 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             await LoadProductsAsync();
         }
 
-
         private async Task LoadProductsAsync()
         {
-            if (_apiService == null || _isLoading)
+            if (_catalogApiClient == null || _isLoading)
             {
                 return;
             }
@@ -63,15 +57,17 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
             try
             {
-                List<Products>? productList = await _apiService.GetProductsAsync();
+                var productsTask = _catalogApiClient.GetProductsAsync();
+                var categoriesTask = _catalogApiClient.GetCategoriesAsync();
 
-                _allProducts = (productList ?? new List<Products>())
+                await Task.WhenAll(productsTask, categoriesTask);
+
+                _allProducts = (productsTask.Result ?? new List<ProductCardModel>())
                     .Where(product => product != null)
-                    .Select(_apiService.MapToProductCard)
                     .Select(PrepareProductForDisplay)
                     .ToList();
 
-                PopulateCategories();
+                PopulateCategories(categoriesTask.Result);
 
                 _isReady = true;
                 _loadCompleted = true;
@@ -79,10 +75,8 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             }
             catch
             {
-                StatusText.Text =
-                    "Не удалось загрузить каталог. Проверьте подключение к API и повторите попытку.";
-                ProductsItemsControl.ItemsSource =
-                    new List<ProductCardModel>();
+                StatusText.Text = "Не удалось загрузить каталог. Проверьте подключение к API и повторите попытку.";
+                ProductsItemsControl.ItemsSource = new List<ProductCardModel>();
             }
             finally
             {
@@ -90,7 +84,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 RetryButton.IsEnabled = true;
             }
         }
-
 
         private ProductCardModel PrepareProductForDisplay(
             ProductCardModel product)
@@ -128,22 +121,29 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             return product;
         }
 
-        private void PopulateCategories()
+        private void PopulateCategories(IReadOnlyList<Categories>? apiCategories = null)
         {
             CategoryFilter.Items.Clear();
             CategoryFilter.Items.Add("Все категории");
 
-            foreach (string category in _allProducts
-                .Select(product => product.Category)
-                .Where(name => !string.IsNullOrWhiteSpace(name))
-                .Distinct()
-                .OrderBy(name => name))
+            IEnumerable<string> categoryNames = (apiCategories != null && apiCategories.Any())
+                ? apiCategories
+                    .Select(c => c.Name)
+                    .Where(name => !string.IsNullOrWhiteSpace(name))
+                : _allProducts
+                    .Select(product => product.Category)
+                    .Where(name => !string.IsNullOrWhiteSpace(name) && name != "Без категории")
+                    .Distinct()
+                    .OrderBy(name => name);
+
+            foreach (string category in categoryNames)
             {
                 CategoryFilter.Items.Add(category);
             }
 
             CategoryFilter.SelectedIndex = 0;
         }
+
 
         private string GetImagePath(string imagePath)
         {
@@ -331,6 +331,35 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             {
                 NavigationService.Navigate(
                     new ProductDetailsPage(product));
+            }
+        }
+
+        private async void AddToCart_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var product = button?.DataContext as ProductCardModel;
+            if (product == null) return;
+
+            if (!ApiService.Instance.IsAuthenticated)
+            {
+                StatusText.Text = "Войдите в аккаунт, чтобы добавлять товары в корзину.";
+                return;
+            }
+
+            if (!product.IsAvailable || product.StockQuantity <= 0)
+            {
+                StatusText.Text = "Товар закончился.";
+                return;
+            }
+
+            try
+            {
+                await ApiService.Instance.AddToCartAsync(product.Id, 1);
+                StatusText.Text = $"Товар «{product.Name}» добавлен в корзину.";
+            }
+            catch
+            {
+                StatusText.Text = "Не удалось добавить товар в корзину.";
             }
         }
     }

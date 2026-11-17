@@ -29,9 +29,11 @@ namespace Api_pendejos.Controllers
 
         private int GetUserId()
         {
-            var claim = User.FindFirstValue("sub");
+            var claim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                        ?? User.FindFirstValue("sub");
             return int.TryParse(claim, out var id) ? id : 0;
         }
+
 
         [HttpGet("statuses")]
         public async Task<IActionResult> GetStatuses()
@@ -55,18 +57,42 @@ namespace Api_pendejos.Controllers
                 ? query.OrderBy(o => o.CreatedAt)
                 : query.OrderByDescending(o => o.CreatedAt);
 
-            var orders = await query
+            var rawOrders = await query
                 .Select(o => new
                 {
                     o.Id,
                     o.CreatedAt,
                     Status = o.Status.Name,
                     o.DeliveryType,
+                    o.DeliveryAddress,
+                    PickupPointName = o.PickupPoint != null ? o.PickupPoint.Name : null,
+                    PickupPointAddress = o.PickupPoint != null ? o.PickupPoint.Address : null,
                     o.TotalPrice,
-                    Positions = o.OrderItems.Count(),
-                    TotalQuantity = o.OrderItems.Sum(i => i.Quantity)
+                    Items = o.OrderItems.Select(i => new
+                    {
+                        ProductName = i.Product.Name,
+                        i.Quantity,
+                        UnitPrice = i.PriceAtPurchase,
+                        LineTotal = i.PriceAtPurchase * i.Quantity
+                    }).ToList()
                 })
                 .ToListAsync();
+
+            var orders = rawOrders.Select(o => new
+            {
+                OrderId = o.Id,
+                OrderDate = o.CreatedAt ?? DateTime.MinValue,
+                o.Status,
+                DeliverySummary = o.DeliveryType == "delivery"
+                    ? "Доставка: " + (o.DeliveryAddress ?? "адрес не указан")
+                    : "Самовывоз: " + (o.PickupPointAddress != null
+                        ? (string.IsNullOrWhiteSpace(o.PickupPointName)
+                            ? o.PickupPointAddress
+                            : $"{o.PickupPointName} ({o.PickupPointAddress})")
+                        : "ПВЗ не указан"),
+                TotalAmount = o.TotalPrice,
+                o.Items
+            });
 
             return Ok(orders);
         }
@@ -193,7 +219,15 @@ namespace Api_pendejos.Controllers
             product.StockQuantity -= request.Quantity;
 
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var details = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, new { message = "Ошибка БД: " + details });
+            }
 
             return Created($"/api/orders/{order.Id}", new { order.Id, total = order.TotalPrice });
         }
@@ -260,7 +294,15 @@ namespace Api_pendejos.Controllers
 
             _context.Cart.RemoveRange(cartItems);
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var details = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, new { message = "Ошибка БД: " + details });
+            }
 
             return Created($"/api/orders/{order.Id}", new { order.Id, total = order.TotalPrice });
         }
@@ -284,15 +326,16 @@ namespace Api_pendejos.Controllers
         }
 
         private async Task<DeliveryRule> ValidateDeliveryAsync(
-            string? requestType,
-            string? address,
-            int? pickupPointId,
-            decimal total)
+    string? requestType,
+    string? address,
+    int? pickupPointId,
+    decimal total)
         {
             if (string.IsNullOrWhiteSpace(requestType))
                 return new DeliveryRule("Выберите способ получения.");
 
-            if (requestType.Equals("Доставка", StringComparison.OrdinalIgnoreCase))
+            if (requestType.Equals("Доставка", StringComparison.OrdinalIgnoreCase) ||
+                requestType.Equals("delivery", StringComparison.OrdinalIgnoreCase))
             {
                 if (total < DeliveryMinimum)
                     return new DeliveryRule($"Доставка доступна только для заказов от {DeliveryMinimum} рублей.");
@@ -300,10 +343,11 @@ namespace Api_pendejos.Controllers
                 if (string.IsNullOrWhiteSpace(address))
                     return new DeliveryRule("Укажите адрес доставки.");
 
-                return new DeliveryRule(null, "Доставка", address, null);
+                return new DeliveryRule(null, "delivery", address, null);
             }
 
-            if (requestType.Equals("Самовывоз", StringComparison.OrdinalIgnoreCase))
+            if (requestType.Equals("Самовывоз", StringComparison.OrdinalIgnoreCase) ||
+                requestType.Equals("pickup", StringComparison.OrdinalIgnoreCase))
             {
                 if (pickupPointId == null)
                     return new DeliveryRule("Выберите пункт выдачи.");
@@ -312,7 +356,7 @@ namespace Api_pendejos.Controllers
                 if (point == null)
                     return new DeliveryRule("Указанный ПВЗ не найден.");
 
-                return new DeliveryRule(null, "Самовывоз", null, point.Id);
+                return new DeliveryRule(null, "pickup", null, point.Id);
             }
 
             return new DeliveryRule("Способ получения: 'Доставка' или 'Самовывоз'.");

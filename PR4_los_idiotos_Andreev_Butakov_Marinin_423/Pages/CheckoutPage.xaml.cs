@@ -146,9 +146,14 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         }
 
         private void DeliveryMethod_Changed(
-            object sender,
-            RoutedEventArgs e)
+    object sender,
+    RoutedEventArgs e)
         {
+            if (DeliveryRadioButton == null || PickupPanel == null || DeliveryPanel == null)
+            {
+                return;
+            }
+
             bool useDelivery = DeliveryRadioButton.IsChecked == true;
 
             PickupPanel.Visibility = useDelivery
@@ -159,6 +164,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
+
 
         private async void PlaceOrder_Click(
             object sender,

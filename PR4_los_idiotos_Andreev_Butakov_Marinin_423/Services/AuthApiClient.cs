@@ -21,7 +21,8 @@ public class AuthApiClient : IAuthApiClient
         var data = await response.Content.ReadFromJsonAsync<LoginResponse>(_client.JsonOptions);
         if (string.IsNullOrEmpty(data?.access_token)) return false;
 
-        bool isAdmin = string.Equals(data.role, "Администратор", StringComparison.OrdinalIgnoreCase);
+        bool isAdmin = string.Equals(data.role, "admin", StringComparison.OrdinalIgnoreCase) ||
+                       string.Equals(data.role, "Администратор", StringComparison.OrdinalIgnoreCase);
         _client.SetSession(data.access_token, login, isAdmin);
         return true;
     }

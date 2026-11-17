@@ -59,48 +59,35 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             await LoadAllAsync();
         }
 
-        // Общая загрузка всех данных панели.
         private async Task LoadAllAsync()
         {
-            if (_isLoading)
-            {
-                return;
-            }
-
+            if (_isLoading) return;
             _isLoading = true;
             StatusText.Text = "Загружаем данные...";
 
-            try
-            {
-                await LoadCategoriesAsync();
-                await LoadProductsAsync();
-                await LoadPickupPointsAsync();
-                await LoadOrderStatusesAsync();
-                await LoadOrdersAsync();
+            var errors = new List<string>();
 
-                if (ReviewProductComboBox.Items.Count > 0 &&
-                    ReviewProductComboBox.SelectedIndex < 0)
-                {
-                    ReviewProductComboBox.SelectedIndex = 0;
-                }
+            try { await LoadCategoriesAsync(); } catch (Exception ex) { errors.Add("Категории: " + ex.Message); }
+            try { await LoadProductsAsync(); } catch (Exception ex) { errors.Add("Товары: " + ex.Message); }
+            try { await LoadPickupPointsAsync(); } catch (Exception ex) { errors.Add("ПВЗ: " + ex.Message); }
+            try { await LoadOrderStatusesAsync(); } catch (Exception ex) { errors.Add("Статусы: " + ex.Message); }
+            try { await LoadOrdersAsync(); } catch (Exception ex) { errors.Add("Заказы: " + ex.Message); }
 
-                await LoadReviewsAsync();
+            if (ReviewProductComboBox.Items.Count > 0 && ReviewProductComboBox.SelectedIndex < 0)
+            {
+                ReviewProductComboBox.SelectedIndex = 0;
+            }
 
-                StatusText.Text =
-                    "Данные успешно загружены. Изменения сохраняются в базе данных через API.";
-            }
-            catch (Exception ex)
-            {
-                StatusText.Text =
-                    "Не удалось загрузить данные: " + ex.Message;
-            }
-            finally
-            {
-                _isLoading = false;
-            }
+            try { await LoadReviewsAsync(); } catch (Exception ex) { errors.Add("Отзывы: " + ex.Message); }
+
+            StatusText.Text = errors.Count == 0
+                ? "Данные успешно загружены."
+                : "Ошибки загрузки — " + string.Join(" | ", errors);
+
+            _isLoading = false;
         }
 
-        // -------------------- ЗАГРУЗКА ДАННЫХ --------------------
+
 
         private async Task LoadCategoriesAsync()
         {
@@ -185,9 +172,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             await LoadAllAsync();
         }
 
-        // -------------------- ТОВАРЫ --------------------
-
-        // Выбор товара в таблице.
         private void ProductsGrid_SelectionChanged(
             object sender,
             SelectionChangedEventArgs e)
@@ -227,8 +211,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             ProductCategoryComboBox.SelectedValue =
                 _selectedProduct.CategoryId;
         }
-
-        // Добавление нового товара или сохранение изменений.
         private async void SaveProduct_Click(
             object sender,
             RoutedEventArgs e)
@@ -353,7 +335,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             ProductCategoryComboBox.SelectedIndex =
             _categories.Count > 0 ? 0 : -1;
         }
-        // -------------------- КАТЕГОРИИ --------------------
         private void CategoriesList_SelectionChanged(
         object sender,
         SelectionChangedEventArgs e)
@@ -414,7 +395,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             CategoriesList.SelectedItem = null;
             CategoryNameBox.Clear();
         }
-        // -------------------- ПВЗ --------------------
         private void PickupPointsList_SelectionChanged(
         object sender,
         SelectionChangedEventArgs e)
@@ -515,7 +495,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             PickupNameBox.Clear();
             PickupAddressBox.Clear();
         }
-        // -------------------- ЗАКАЗЫ --------------------
         private void OrdersGrid_SelectionChanged(
         object sender,
         SelectionChangedEventArgs e)
@@ -562,7 +541,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 "Не удалось изменить статус заказа: " + ex.Message;
             }
         }
-        // -------------------- ОТЗЫВЫ --------------------
         private async void ReviewProductComboBox_SelectionChanged(
         object sender,
         SelectionChangedEventArgs e)
@@ -623,7 +601,6 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 "Не удалось удалить отзыв: " + ex.Message;
             }
         }
-        // Разбор цены с поддержкой запятой и точки.
         private bool TryParsePrice(string text, out decimal price)
         {
             string value = (text ?? "").Trim().Replace(" ", "");
@@ -641,6 +618,24 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             NumberStyles.Number,
             CultureInfo.InvariantCulture,
             out price);
+        }
+
+        private async void AddProduct_Click(object sender, RoutedEventArgs e)
+        {
+            _selectedProduct = null;
+            SaveProduct_Click(sender, e);
+        }
+
+        private void AddCategory_Click(object sender, RoutedEventArgs e)
+        {
+            _selectedCategory = null;
+            SaveCategory_Click(sender, e);
+        }
+
+        private void AddPickupPoint_Click(object sender, RoutedEventArgs e)
+        {
+            _selectedPickupPoint = null;
+            SavePickupPoint_Click(sender, e);
         }
     }
 }

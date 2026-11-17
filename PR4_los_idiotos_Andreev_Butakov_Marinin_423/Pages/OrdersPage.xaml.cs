@@ -24,6 +24,7 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
             InitializeComponent();
             _ordersApiClient = ordersApiClient;
             OrdersList.ItemsSource = _orders;
+            Loaded += OrdersPage_Loaded;
         }
 
         private async void OrdersPage_Loaded(object sender, RoutedEventArgs e)
@@ -105,10 +106,10 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 EmptyStatePanel.Visibility = Visibility.Collapsed;
                 OrdersList.SelectedIndex = 0;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 _orders.Clear();
-                ShowEmptyState("Не удалось загрузить заказы", "Проверьте подключение и повторите попытку.");
+                ShowEmptyState("Не удалось загрузить заказы", ex.Message);
             }
         }
 

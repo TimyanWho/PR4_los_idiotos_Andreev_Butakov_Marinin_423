@@ -203,20 +203,23 @@
                                           IsChecked="True"
                                           Margin="0,13,0,4"/>
 
+                                <!-- Для вкладки Товары -->
                                 <WrapPanel>
+                                    <Button Content="Добавить товар"
+                                        Style="{StaticResource ActionButton}"
+                                        Click="AddProduct_Click"/>
 
-                                    <Button Content="Сохранить товар"
-                                            Style="{StaticResource ActionButton}"
-                                            Click="SaveProduct_Click"/>
+                                                                <Button Content="Сохранить изменения"
+                                        Background="#027A48"
+                                        Style="{StaticResource ActionButton}"
+                                        Click="SaveProduct_Click"/>
 
-                                    <Button Content="Очистить / Новый"
-                                            Background="#E4E7EC"
-                                            Foreground="#344054"
-                                            Style="{StaticResource ActionButton}"
-                                            Click="ClearProductForm_Click"/>
-
+                                                                <Button Content="Очистить"
+                                        Background="#E4E7EC"
+                                        Foreground="#344054"
+                                        Style="{StaticResource ActionButton}"
+                                        Click="ClearProductForm_Click"/>
                                 </WrapPanel>
-
                             </StackPanel>
                         </ScrollViewer>
                     </Border>
@@ -266,6 +269,9 @@
                                      Style="{StaticResource FieldBox}"/>
 
                             <WrapPanel>
+                                <Button Content="Добавить категорию"
+                                        Style="{StaticResource ActionButton}"
+                                        Click="AddCategory_Click"/>
 
                                 <Button Content="Сохранить категорию"
                                         Style="{StaticResource ActionButton}"
@@ -338,6 +344,9 @@
                                      Style="{StaticResource FieldBox}"/>
 
                             <WrapPanel>
+                                <Button Content="Добавить ПВЗ"
+                                        Style="{StaticResource ActionButton}"
+                                        Click="AddPickupPoint_Click"/>
 
                                 <Button Content="Сохранить ПВЗ"
                                         Style="{StaticResource ActionButton}"

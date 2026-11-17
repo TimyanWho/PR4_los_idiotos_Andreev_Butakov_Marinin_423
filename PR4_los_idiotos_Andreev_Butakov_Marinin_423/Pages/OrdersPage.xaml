@@ -109,10 +109,8 @@
                                             <TextBlock Text="{Binding Status}" Grid.Column="1" HorizontalAlignment="Right" FontSize="12" FontWeight="SemiBold" Foreground="#3157D5" />
                                         </Grid>
                                         <TextBlock Text="{Binding OrderDate, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Style="{StaticResource MutedText}" Margin="0,7,0,0" />
-                                        <Grid Margin="0,10,0,0">
-                                            <TextBlock Text="{Binding DeliverySummary}" Style="{StaticResource MutedText}" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2} ₽}" HorizontalAlignment="Right" FontSize="14" FontWeight="Bold" Foreground="#19233A" />
-                                        </Grid>
+                                        <TextBlock Text="{Binding DeliverySummary}" Style="{StaticResource MutedText}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2} ₽}" HorizontalAlignment="Right" FontSize="14" FontWeight="Bold" Foreground="#19233A" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

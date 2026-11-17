@@ -59,7 +59,10 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
 
         private string GetImagePath(string imagePath)
         {
-            if (string.IsNullOrWhiteSpace(imagePath)) return null;
+            if (string.IsNullOrWhiteSpace(imagePath))
+            {
+                return null;
+            }
 
             if (imagePath.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                 imagePath.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
@@ -68,12 +71,32 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 return imagePath;
             }
 
-            string fileName = Path.GetFileName(imagePath.Replace((char)92, '/'));
-            if (string.IsNullOrWhiteSpace(fileName)) return null;
+            string fileName = Path.GetFileName(imagePath.Replace('\\', '/'));
+
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return null;
+            }
+
+            DirectoryInfo? dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            while (dir != null && !File.Exists(Path.Combine(dir.FullName, "PR4_los_idiotos_Andreev_Butakov_Marinin_423.csproj")))
+            {
+                dir = dir.Parent;
+            }
+
+            if (dir != null)
+            {
+                string projectFilePath = Path.Combine(dir.FullName, "Assets", "Products", fileName);
+                if (File.Exists(projectFilePath))
+                {
+                    return projectFilePath;
+                }
+            }
 
             return "/PR4_los_idiotos_Andreev_Butakov_Marinin_423;component/Assets/Products/" +
                    Uri.EscapeDataString(fileName);
         }
+
 
         private void UpdateFavoritesView()
         {

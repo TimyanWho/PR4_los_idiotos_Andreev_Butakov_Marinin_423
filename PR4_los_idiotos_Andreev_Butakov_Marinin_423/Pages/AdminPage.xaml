@@ -172,9 +172,28 @@
                                 <TextBlock Text="Путь к изображению"
                                            Style="{StaticResource FieldLabel}"/>
 
-                                <TextBox x:Name="ProductImageBox"
+                                <TextBlock Text="Изображение товара"
+           Style="{StaticResource FieldLabel}"/>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox x:Name="ProductImageBox"
+                                         Grid.Column="0"
                                          Style="{StaticResource FieldBox}"
-                                         ToolTip="Например: xphone15.jpg"/>
+                                         ToolTip="Например: /Assets/Products/xphone15.jpg"/>
+
+                                                                <Button Grid.Column="1"
+                                        Content="Выбрать..."
+                                        Style="{StaticResource ActionButton}"
+                                        Margin="8,0,0,0"
+                                        Padding="12,0"
+                                        Click="SelectProductImage_Click"/>
+                                </Grid>
+
 
                                 <TextBlock Text="Количество на складе"
                                            Style="{StaticResource FieldLabel}"/>

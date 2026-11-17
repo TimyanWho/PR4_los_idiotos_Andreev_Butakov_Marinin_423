@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -636,6 +638,52 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
         {
             _selectedPickupPoint = null;
             SavePickupPoint_Click(sender, e);
+        }
+
+        private void SelectProductImage_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Title = "Выберите изображение товара",
+                Filter = "Изображения (*.jpg;*.jpeg;*.png;*.webp)|*.jpg;*.jpeg;*.png;*.webp|Все файлы (*.*)|*.*"
+            };
+
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            try
+            {
+                string sourceFile = dialog.FileName;
+                string extension = Path.GetExtension(sourceFile);
+                string fileName = $"{Guid.NewGuid():N}{extension}";
+
+                DirectoryInfo? dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+                while (dir != null && !File.Exists(Path.Combine(dir.FullName, "PR4_los_idiotos_Andreev_Butakov_Marinin_423.csproj")))
+                {
+                    dir = dir.Parent;
+                }
+
+                if (dir == null)
+                {
+                    StatusText.Text = "Не удалось найти папку проекта.";
+                    return;
+                }
+
+                string projectFolder = Path.Combine(dir.FullName, "Assets", "Products");
+                Directory.CreateDirectory(projectFolder);
+
+                string destPath = Path.Combine(projectFolder, fileName);
+                File.Copy(sourceFile, destPath, overwrite: true);
+
+                ProductImageBox.Text = $"/images/products/{fileName}";
+                StatusText.Text = "Изображение сохранено: " + fileName;
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = "Ошибка при сохранении изображения: " + ex.Message;
+            }
         }
     }
 }

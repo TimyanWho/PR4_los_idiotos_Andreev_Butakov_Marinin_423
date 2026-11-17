@@ -3,17 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api_pendejos.DTO
 {
-    public record ProductResponse(
-        int Id,
+    public record CreateProductRequest(
         string Name,
-        decimal Price,
-        string Description,
-        int CategoryId,
-        string CategoryName,
-        string ImagePath,
-        int StockQuantity,
-        int? ItemsPerPackage,
-        bool IsAvailable,
-        double AverageRating
+        decimal Price
     );
 }

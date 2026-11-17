@@ -161,18 +161,32 @@ namespace PR4_los_idiotos_Andreev_Butakov_Marinin_423.Pages
                 return imagePath;
             }
 
-            // The API returns the stored image path; the actual images are WPF Resources.
-            string fileName = Path.GetFileName(
-                imagePath.Replace((char)92, '/'));
+            string fileName = Path.GetFileName(imagePath.Replace('\\', '/'));
 
             if (string.IsNullOrWhiteSpace(fileName))
             {
                 return null;
             }
 
+            DirectoryInfo? dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            while (dir != null && !File.Exists(Path.Combine(dir.FullName, "PR4_los_idiotos_Andreev_Butakov_Marinin_423.csproj")))
+            {
+                dir = dir.Parent;
+            }
+
+            if (dir != null)
+            {
+                string projectFilePath = Path.Combine(dir.FullName, "Assets", "Products", fileName);
+                if (File.Exists(projectFilePath))
+                {
+                    return projectFilePath;
+                }
+            }
+
             return "/PR4_los_idiotos_Andreev_Butakov_Marinin_423;component/Assets/Products/" +
                    Uri.EscapeDataString(fileName);
         }
+
 
         private void Filters_Changed(
             object sender,
